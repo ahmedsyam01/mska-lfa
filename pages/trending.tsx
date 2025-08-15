@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import Layout from '../components/Layout/Layout';
 import NewsCard from '../components/common/NewsCard';
 import { TrendingUp, Flame, Hash, Eye } from 'lucide-react';
+import { articlesAPI } from '@/utils/api';
 
 interface Article {
   id: string;
@@ -41,11 +42,8 @@ const TrendingPage: React.FC = () => {
   const fetchTrendingData = async () => {
     try {
       // Fetch trending articles
-      const articlesResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles?trending=true`);
-      if (articlesResponse.ok) {
-        const articlesData = await articlesResponse.json();
-        setArticles(articlesData.articles || []);
-      }
+      const articlesResponse = await articlesAPI.getAll({ trending: 'true' as any });
+      setArticles(articlesResponse.data.articles || []);
 
       // Mock trending topics data
       setTopics([

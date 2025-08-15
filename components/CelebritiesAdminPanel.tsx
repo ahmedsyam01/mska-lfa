@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { celebritiesAPI } from '@/utils/api';
 
 interface Celebrity {
   id: string;
@@ -23,16 +24,11 @@ const CelebritiesAdminPanel: React.FC = () => {
   const fetchCelebrities = async () => {
     try {
       setError('');
-      let url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/celebrities?limit=1000`;
-      if (filter === 'verified') url += '&verified=true';
-      if (filter === 'unverified') url += '&verified=false';
-      const response = await fetch(url, { credentials: 'include' });
-      if (!response.ok) {
-        const err = await response.text();
-        throw new Error(err || 'Failed to fetch celebrities');
-      }
-      const data = await response.json();
-      setCelebrities(data.celebrities || []);
+      const params: any = { limit: 1000 };
+      if (filter === 'verified') params.verified = true;
+      if (filter === 'unverified') params.verified = false;
+      const response = await celebritiesAPI.getAll(params);
+      setCelebrities(response.data.celebrities || []);
     } catch (error: any) {
       setCelebrities([]);
       setError(error.message || 'حدث خطأ في جلب البيانات');

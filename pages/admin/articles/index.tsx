@@ -55,7 +55,10 @@ const AdminArticlesPage: React.FC = () => {
       if (!(typeof article.sourceUrl === 'string' && article.sourceUrl.trim() !== '')) delete payload.sourceUrl;
       if (!(typeof article.sourceName === 'string' && article.sourceName.trim() !== '')) delete payload.sourceName;
       if (payload.imageUrl && !payload.imageUrl.startsWith('http')) {
-        payload.imageUrl = `http://localhost:3001${payload.imageUrl}`;
+        const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+          ? 'https://rimna-backend-production.up.railway.app'
+          : 'http://localhost:3001';
+        payload.imageUrl = `${base}${payload.imageUrl}`;
       }
       await articlesAPI.update(id, payload);
       setArticles(articles => articles.map(a => a.id === id ? { ...a, status: 'PUBLISHED' } : a));

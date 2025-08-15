@@ -34,7 +34,10 @@ const CATEGORIES = [
 const getFullImageUrl = (url: string) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `http://localhost:3001${url}`;
+  const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+    ? 'https://rimna-backend-production.up.railway.app'
+    : 'http://localhost:3001';
+  return `${base}${url}`;
 };
 
 const NewArticlePage: React.FC = () => {

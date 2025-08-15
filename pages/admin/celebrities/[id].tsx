@@ -34,7 +34,10 @@ const EditCelebrityPage: React.FC = () => {
   const fetchCelebrity = async () => {
     setFetching(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/celebrities/${id}`);
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const res = await fetch(`${base}/api/celebrities/${id}`);
       if (!res.ok) throw new Error('فشل جلب بيانات المشهور');
       const data = await res.json();
       setForm({
@@ -87,7 +90,10 @@ const EditCelebrityPage: React.FC = () => {
     const formData = new FormData();
     formData.append('image', avatarFile);
     const token = getCookie('rimna_token');
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/upload/image`, {
+    const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+      ? 'https://rimna-backend-production.up.railway.app'
+      : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+    const res = await fetch(`${base}/api/upload/image`, {
       method: 'POST',
       body: formData,
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -107,7 +113,10 @@ const EditCelebrityPage: React.FC = () => {
       if (avatarFile) {
         avatarUrl = await uploadAvatar();
       }
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/celebrities/${id}`, {
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const res = await fetch(`${base}/api/celebrities/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

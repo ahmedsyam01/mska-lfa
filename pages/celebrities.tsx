@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Layout from '../components/Layout/Layout';
 import { Users, Verified, Twitter, Instagram, Facebook, Crown } from 'lucide-react';
+import { celebritiesAPI } from '@/utils/api';
 
 interface Celebrity {
   id: string;
@@ -41,16 +42,11 @@ const CelebritiesPage: React.FC = () => {
 
   const fetchCelebrities = async () => {
     try {
-      let url = `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/celebrities?limit=1000`;
-      if (filter === 'verified') url += '&verified=true';
-      if (filter === 'unverified') url += '&verified=false';
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        setCelebrities(data.celebrities || []);
-      } else {
-        setCelebrities([]);
-      }
+      const params: any = { limit: 1000 };
+      if (filter === 'verified') params.verified = true;
+      if (filter === 'unverified') params.verified = false;
+      const response = await celebritiesAPI.getAll(params);
+      setCelebrities(response.data.celebrities || []);
     } catch (error) {
       setCelebrities([]);
     } finally {

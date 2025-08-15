@@ -37,7 +37,10 @@ const CommentSystem: React.FC<CommentSystemProps> = ({ articleId, initialComment
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${articleId}/comments`);
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const response = await fetch(`${base}/api/articles/${articleId}/comments`);
       if (response.ok) {
         const data = await response.json();
         setComments(data.comments || []);
@@ -96,7 +99,10 @@ const CommentSystem: React.FC<CommentSystemProps> = ({ articleId, initialComment
     if (!newComment.trim() || !isAuthenticated) return;
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${articleId}/comments`, {
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const response = await fetch(`${base}/api/articles/${articleId}/comments`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

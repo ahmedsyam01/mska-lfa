@@ -16,7 +16,10 @@ const CreateReportPage: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/reports`, {
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const res = await fetch(`${base}/api/reports`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, title, content }),

@@ -125,7 +125,7 @@ export const articlesAPI = {
 };
 
 export const celebritiesAPI = {
-  getAll: () => api.get('/celebrities'),
+  getAll: (params?: Record<string, any>) => api.get('/celebrities', { params }),
   
   getById: (id: string) => api.get(`/celebrities/${id}`),
   

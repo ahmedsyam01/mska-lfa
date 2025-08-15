@@ -3,6 +3,7 @@ import { GetStaticProps } from 'next';
 import Layout from '../components/Layout/Layout';
 import NewsCard from '../components/common/NewsCard';
 import { Search, Filter, Calendar, TrendingUp } from 'lucide-react';
+import { articlesAPI } from '@/utils/api';
 
 interface Article {
   id: string;
@@ -34,14 +35,10 @@ const NewsPage: React.FC = () => {
 
   const fetchArticles = async () => {
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles?status=PUBLISHED&limit=50`);
-      if (response.ok) {
-        const data = await response.json();
-        setArticles(data.articles || []);
-        console.log('Articles fetched:', data.articles?.length || 0);
-      } else {
-        console.error('Failed to fetch articles:', response.status);
-      }
+      const response = await articlesAPI.getAll({ status: 'PUBLISHED', limit: 50 });
+      const data = response.data;
+      setArticles(data.articles || []);
+      console.log('Articles fetched:', data.articles?.length || 0);
     } catch (error) {
       console.error('Error fetching articles:', error);
     } finally {

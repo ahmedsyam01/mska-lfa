@@ -52,7 +52,10 @@ const NewCelebrityPage: React.FC = () => {
     const formData = new FormData();
     formData.append('image', avatarFile);
     const token = typeof window !== 'undefined' ? (document.cookie.match(/rimna_token=([^;]+)/)?.[1] || '') : '';
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/upload/image`, {
+    const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+      ? 'https://rimna-backend-production.up.railway.app'
+      : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+    const res = await fetch(`${base}/api/upload/image`, {
       method: 'POST',
       body: formData,
       headers: token ? { Authorization: `Bearer ${token}` } : {},
@@ -87,7 +90,10 @@ const NewCelebrityPage: React.FC = () => {
         avatarUrl = base.replace(/\/$/, '') + avatarUrl;
       }
       const token = getCookie('rimna_token');
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/celebrities`, {
+      const base = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const res = await fetch(`${base}/api/celebrities`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
