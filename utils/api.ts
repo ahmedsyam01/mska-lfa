@@ -3,6 +3,14 @@ import Cookies from 'js-cookie';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
+// Debug logging for Railway
+if (typeof window !== 'undefined') {
+  console.log('🔍 API Configuration Debug:');
+  console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('API_BASE_URL:', API_BASE_URL);
+  console.log('Final API URL:', `${API_BASE_URL}/api`);
+}
+
 // Create axios instance with Railway-optimized configuration
 export const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
@@ -10,7 +18,7 @@ export const api = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 30000, // 30 second timeout for Railway
-  withCredentials: true, // Enable cookies for CORS
+  withCredentials: false, // Disable for Railway CORS compatibility
 });
 
 // Request interceptor to add auth token
