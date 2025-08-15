@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Calendar, Eye, MessageCircle, Share2 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
+import { fixImageUrl } from '../../utils/imageUrl';
 
 interface NewsCardProps {
   article: {
@@ -72,7 +73,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
           {article.imageUrl && (
             <div className="flex-shrink-0 w-16 h-16 relative">
               <img
-                src={article.imageUrl}
+                src={fixImageUrl(article.imageUrl) || ''}
                 alt={article.titleAr || article.title}
                 className="w-full h-full object-cover rounded-lg"
               />
@@ -100,7 +101,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
           {article.imageUrl && (
             <div className="relative h-64 md:h-80">
               <img
-                src={article.imageUrl}
+                src={fixImageUrl(article.imageUrl) || ''}
                 alt={article.titleAr || article.title}
                 className="w-full h-full object-cover"
               />
@@ -158,7 +159,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
         {article.imageUrl && (
           <div className="relative h-48">
             <img
-              src={article.imageUrl}
+              src={fixImageUrl(article.imageUrl) || ''}
               alt={article.titleAr || article.title}
               className="w-full h-full object-cover"
             />
