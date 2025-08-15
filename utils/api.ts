@@ -37,7 +37,14 @@ export const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // Set the baseURL dynamically for each request
-    config.baseURL = `${getApiUrl()}/api`;
+    const apiUrl = getApiUrl();
+    config.baseURL = `${apiUrl}/api`;
+    
+    // Extra debug logging for each request
+    if (typeof window !== 'undefined') {
+      console.log(`🚀 Making request to: ${config.baseURL}${config.url || ''}`);
+      console.log(`🔗 Full URL: ${config.baseURL}${config.url || ''}${config.params ? '?' + new URLSearchParams(config.params).toString() : ''}`);
+    }
     
     const token = Cookies.get('rimna_token');
     if (token) {
