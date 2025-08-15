@@ -366,10 +366,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params!;
   
   try {
-    const envUrl = process.env.NEXT_PUBLIC_API_URL;
-    const backendUrl = envUrl && envUrl.startsWith('http')
-      ? envUrl
-      : 'https://rimna-backend-production.up.railway.app';
+    const envUrl = process.env.NEXT_PUBLIC_API_URL || '';
+    const isLocal = /localhost|127\.0\.0\.1|::1/i.test(envUrl);
+    const backendUrl = !envUrl || isLocal
+      ? 'https://rimna-backend-production.up.railway.app'
+      : envUrl;
     const response = await fetch(`${backendUrl}/api/articles/${id}`);
     
     if (!response.ok) {
