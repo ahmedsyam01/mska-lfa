@@ -6,6 +6,8 @@ import { Calendar, Eye, MessageCircle, Share2, ArrowLeft, Heart, Bookmark } from
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import CommentSystem from '../../components/common/CommentSystem';
+import { articlesAPI } from '../../utils/api';
+import { fixImageUrl } from '../../utils/imageUrl';
 
 interface Article {
   id: string;
@@ -63,13 +65,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   const fetchArticle = async (id: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setCurrentArticle(data.article);
-      } else {
-        router.push('/404');
-      }
+      const response = await articlesAPI.getById(id);
+      const data = response.data;
+      const received = data.article ?? data;
+      setCurrentArticle(received || null);
     } catch (error) {
       console.error('Error fetching article:', error);
       router.push('/404');
@@ -108,14 +107,8 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
     if (!currentArticle) return;
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${currentArticle.id}/like`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      
-      if (response.ok) {
+      const response = await articlesAPI.like(currentArticle.id);
+      if (response.status === 200) {
         setLiked(!liked);
         setCurrentArticle(prev => prev ? {
           ...prev,
@@ -134,7 +127,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
     if (!currentArticle) return;
     
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/articles/${currentArticle.id}/bookmark`, {
+      const apiBase = (typeof window !== 'undefined' && window.location.hostname.includes('railway.app'))
+        ? 'https://rimna-backend-production.up.railway.app'
+        : (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001');
+      const response = await fetch(`${apiBase}/api/articles/${currentArticle.id}/bookmark`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -293,7 +289,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
         {currentArticle.imageUrl && (
           <div className="mb-8">
             <img
-              src={currentArticle.imageUrl}
+              src={fixImageUrl(currentArticle.imageUrl) || ''}
               alt={currentArticle.titleAr || currentArticle.title}
               className="w-full h-64 md:h-96 object-cover rounded-lg"
             />
@@ -370,7 +366,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const { id } = params!;
   
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles/${id}`);
+    const envUrl = process.env.NEXT_PUBLIC_API_URL;
+    const backendUrl = envUrl && envUrl.startsWith('http')
+      ? envUrl
+      : 'https://rimna-backend-production.up.railway.app';
+    const response = await fetch(`${backendUrl}/api/articles/${id}`);
     
     if (!response.ok) {
       return {
@@ -378,7 +378,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       };
     }
     
-    const article = await response.json();
+    const raw = await response.json();
+    const article = raw.article ?? raw;
     
     // Sanitize article data
     const sanitizedArticle = {
