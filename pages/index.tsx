@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import Layout from '../components/Layout/Layout';
 import { GetStaticProps } from 'next';
+import { articlesAPI } from '../utils/api';
 
 interface Article {
   id: string;
@@ -58,10 +59,9 @@ const HomePage: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/articles?limit=500&status=PUBLISHED`);
-        if (response.ok) {
-          const data = await response.json();
-          setArticles(data.articles || []);
+        const response = await articlesAPI.getAll({ limit: 500, status: 'PUBLISHED' });
+        const data = response.data;
+        setArticles(data.articles || []);
           setLastUpdated(new Date());
           console.log(`✅ Fetched ${data.articles?.length || 0} articles from API`);
           
@@ -72,9 +72,6 @@ const HomePage: React.FC = () => {
             return acc;
           }, {});
           console.log('📊 Articles by source:', articlesBySource);
-          } else {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
       } catch (error) {
         console.error('❌ Error fetching articles:', error);
         setError(error instanceof Error ? error.message : 'Failed to fetch articles');

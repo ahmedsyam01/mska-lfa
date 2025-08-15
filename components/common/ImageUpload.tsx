@@ -47,9 +47,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
       const response = await uploadAPI.uploadImage(file);
       let imageUrl = response.data.url;
-      // Always use full URL
+      // Always use full URL - use Railway URL when on Railway
       if (imageUrl && !imageUrl.startsWith('http')) {
-        imageUrl = `http://localhost:3001${imageUrl}`;
+        const isRailway = typeof window !== 'undefined' && window.location.hostname.includes('railway.app');
+        const baseUrl = isRailway ? 'https://rimna-backend-production.up.railway.app' : 'http://localhost:3001';
+        imageUrl = `${baseUrl}${imageUrl}`;
       }
       onImageChange(imageUrl);
     } catch (error) {
