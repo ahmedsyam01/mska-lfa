@@ -107,6 +107,7 @@ export const articlesAPI = {
     limit?: number;
     category?: string;
     search?: string;
+    status?: string; // Added to allow filtering by status
   }) => api.get('/articles', { params }),
   
   getById: (id: string) => api.get(`/articles/${id}`),
