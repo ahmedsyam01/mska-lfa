@@ -1,12 +1,18 @@
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+// Temporary hardcode for Railway deployment issues
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 
+  (typeof window !== 'undefined' && window.location.hostname.includes('railway.app') 
+    ? 'https://rimna-backend-production.up.railway.app' 
+    : 'http://localhost:3001');
 
 // Debug logging for Railway
 if (typeof window !== 'undefined') {
   console.log('🔍 API Configuration Debug:');
   console.log('NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
+  console.log('Window hostname:', window.location.hostname);
+  console.log('Is Railway?:', window.location.hostname.includes('railway.app'));
   console.log('API_BASE_URL:', API_BASE_URL);
   console.log('Final API URL:', `${API_BASE_URL}/api`);
 }
