@@ -6,9 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "start:standalone": "node .next/standalone/server.js",
     "lint": "next lint",
     "railway:build": "npm install && npm run build",
-    "railway:start": "npm start"
+    "railway:start": "npm run start:standalone"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.4",
