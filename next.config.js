@@ -25,8 +25,8 @@ const nextConfig = {
       ? 'https://rimna-backend-production.up.railway.app'
       : process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
   },
-  // Enable standalone output for Railway deployment
-  output: process.env.RAILWAY_ENVIRONMENT ? 'standalone' : undefined,
+  // Disable standalone output - it causes health check issues on Railway
+  // output: process.env.RAILWAY_ENVIRONMENT ? 'standalone' : undefined,
   // Optimize for production
   poweredByHeader: false,
   generateEtags: false,
