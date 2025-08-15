@@ -1,5 +1,6 @@
 import { AppProps } from 'next/app';
 import { Toaster } from 'react-hot-toast';
+import { appWithTranslation } from 'next-i18next';
 import { AuthProvider } from '../hooks/useAuth';
 import '../styles/globals.css';
 
@@ -21,4 +22,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default MyApp; 
+export default appWithTranslation(MyApp); 

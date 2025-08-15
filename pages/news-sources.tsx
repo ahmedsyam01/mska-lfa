@@ -33,9 +33,9 @@ interface NewsSource {
 }
 
 interface NewsSourcesPageProps {
-  sources: NewsSource[];
-  categories: string[];
-  stats: {
+  sources?: NewsSource[];
+  categories?: string[];
+  stats?: {
     totalSources: number;
     activeSources: number;
     totalArticles: number;
@@ -44,9 +44,14 @@ interface NewsSourcesPageProps {
 }
 
 const NewsSourcesPage: React.FC<NewsSourcesPageProps> = ({ 
-  sources: initialSources, 
-  categories, 
-  stats 
+  sources: initialSources = [], 
+  categories = [], 
+  stats = {
+    totalSources: 0,
+    activeSources: 0,
+    totalArticles: 0,
+    averageReliability: 0
+  }
 }) => {
   const router = useRouter();
   const { locale } = router;
@@ -54,9 +59,66 @@ const NewsSourcesPage: React.FC<NewsSourcesPageProps> = ({
 
   const [sources, setSources] = useState<NewsSource[]>(initialSources);
   const [filteredSources, setFilteredSources] = useState<NewsSource[]>(initialSources);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [sortBy, setSortBy] = useState<'name' | 'reliability' | 'articles' | 'recent'>('reliability');
+
+  // Fetch data if not provided via props
+  useEffect(() => {
+    const fetchData = async () => {
+      if (initialSources.length === 0) {
+        try {
+          setLoading(true);
+          // Since we don't have a backend, use mock data
+          const mockSources: NewsSource[] = [
+            {
+              id: '1',
+              name: 'Mauritania News',
+              nameAr: 'أخبار موريتانيا',
+              url: 'https://mauritanianews.mr',
+              rssUrl: 'https://mauritanianews.mr/rss',
+              description: 'Leading news source in Mauritania',
+              descriptionAr: 'مصدر إخباري رائد في موريتانيا',
+              category: 'General',
+              language: 'ar',
+              country: 'Mauritania',
+              reliability: 85,
+              isActive: true,
+              lastFetchedAt: new Date().toISOString(),
+              _count: { articles: 150 }
+            },
+            {
+              id: '2',
+              name: 'Sahara Media',
+              nameAr: 'إعلام الصحراء',
+              url: 'https://saharamedia.mr',
+              rssUrl: 'https://saharamedia.mr/rss',
+              description: 'Regional news and analysis',
+              descriptionAr: 'الأخبار الإقليمية والتحليل',
+              category: 'Politics',
+              language: 'ar',
+              country: 'Mauritania',
+              reliability: 78,
+              isActive: true,
+              lastFetchedAt: new Date().toISOString(),
+              _count: { articles: 89 }
+            }
+          ];
+          
+          setSources(mockSources);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error fetching sources:', error);
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [initialSources]);
 
   useEffect(() => {
     let filtered = sources;
@@ -106,6 +168,16 @@ const NewsSourcesPage: React.FC<NewsSourcesPageProps> = ({
     return 'Low Reliability';
   };
 
+  // Compute stats and categories from current sources
+  const computedStats = {
+    totalSources: sources.length,
+    activeSources: sources.filter(s => s.isActive).length,
+    totalArticles: sources.reduce((sum, s) => sum + s._count.articles, 0),
+    averageReliability: sources.length > 0 ? Math.round(sources.reduce((sum, s) => sum + s.reliability, 0) / sources.length) : 0
+  };
+
+  const computedCategories = Array.from(new Set(sources.map(s => s.category)));
+
   return (
     <Layout title="News Sources - Rimna">
       <div className="min-h-screen bg-gray-50">
@@ -125,31 +197,43 @@ const NewsSourcesPage: React.FC<NewsSourcesPageProps> = ({
 
         {/* Stats */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <Globe className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{stats.totalSources}</div>
-              <div className="text-sm text-gray-600">Total Sources</div>
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="bg-white rounded-lg shadow-sm p-6 text-center animate-pulse">
+                  <div className="h-8 w-8 bg-gray-200 rounded mx-auto mb-2" />
+                  <div className="h-6 bg-gray-200 rounded mb-2" />
+                  <div className="h-4 bg-gray-200 rounded" />
+                </div>
+              ))}
             </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+                <Globe className="h-8 w-8 text-primary-600 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-gray-900">{computedStats.totalSources}</div>
+                <div className="text-sm text-gray-600">Total Sources</div>
+              </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <Activity className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{stats.activeSources}</div>
-              <div className="text-sm text-gray-600">Active Sources</div>
-            </div>
+              <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+                <Activity className="h-8 w-8 text-green-600 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-gray-900">{computedStats.activeSources}</div>
+                <div className="text-sm text-gray-600">Active Sources</div>
+              </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <TrendingUp className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{stats.totalArticles.toLocaleString()}</div>
-              <div className="text-sm text-gray-600">Total Articles</div>
-            </div>
+              <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+                <TrendingUp className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-gray-900">{computedStats.totalArticles.toLocaleString()}</div>
+                <div className="text-sm text-gray-600">Total Articles</div>
+              </div>
 
-            <div className="bg-white rounded-lg shadow-sm p-6 text-center">
-              <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-gray-900">{stats.averageReliability}%</div>
-              <div className="text-sm text-gray-600">Average Reliability</div>
+              <div className="bg-white rounded-lg shadow-sm p-6 text-center">
+                <Star className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                <div className="text-2xl font-bold text-gray-900">{computedStats.averageReliability}%</div>
+                <div className="text-sm text-gray-600">Average Reliability</div>
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Filters */}
           <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
@@ -175,9 +259,9 @@ const NewsSourcesPage: React.FC<NewsSourcesPageProps> = ({
                   className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-white"
                 >
                   <option value="all">All Categories</option>
-                  {categories.map(category => (
+                  {computedCategories.map(category => (
                     <option key={category} value={category}>
-                      {category.toLowerCase()}
+                      {category}
                     </option>
                   ))}
                 </select>
