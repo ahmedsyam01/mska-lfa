@@ -1,38 +1,44 @@
 import axios, { AxiosResponse } from 'axios';
 import Cookies from 'js-cookie';
 
-// Fix Railway deployment - override localhost when on Railway
-const isRailway = typeof window !== 'undefined' && window.location.hostname.includes('railway.app');
-const envUrl = process.env.NEXT_PUBLIC_API_URL;
+// Function to get the correct API URL dynamically
+const getApiUrl = (): string => {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  const isRailway = typeof window !== 'undefined' && window.location.hostname.includes('railway.app');
+  
+  const finalUrl = isRailway && envUrl === 'http://localhost:3001' 
+    ? 'https://rimna-backend-production.up.railway.app'
+    : envUrl || 'http://localhost:3001';
+    
+  // Debug logging for Railway
+  if (typeof window !== 'undefined') {
+    console.log('🔍 API Configuration Debug:');
+    console.log('NEXT_PUBLIC_API_URL:', envUrl);
+    console.log('Window hostname:', window.location.hostname);
+    console.log('Is Railway?:', isRailway);
+    console.log('Is localhost env?:', envUrl === 'http://localhost:3001');
+    console.log('API_BASE_URL (final):', finalUrl);
+    console.log('Final API URL:', `${finalUrl}/api`);
+  }
+  
+  return finalUrl;
+};
 
-const API_BASE_URL = isRailway && envUrl === 'http://localhost:3001' 
-  ? 'https://rimna-backend-production.up.railway.app'
-  : envUrl || 'http://localhost:3001';
-
-// Debug logging for Railway
-if (typeof window !== 'undefined') {
-  console.log('🔍 API Configuration Debug:');
-  console.log('NEXT_PUBLIC_API_URL:', envUrl);
-  console.log('Window hostname:', window.location.hostname);
-  console.log('Is Railway?:', isRailway);
-  console.log('Is localhost env?:', envUrl === 'http://localhost:3001');
-  console.log('API_BASE_URL (final):', API_BASE_URL);
-  console.log('Final API URL:', `${API_BASE_URL}/api`);
-}
-
-// Create axios instance with Railway-optimized configuration
+// Create axios instance with dynamic URL
 export const api = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
+  timeout: 30000, // 30 second timeout for Railway
+  withCredentials: false, // Disable for Railway CORS compatibility
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 30000, // 30 second timeout for Railway
-  withCredentials: false, // Disable for Railway CORS compatibility
 });
 
-// Request interceptor to add auth token
+// Request interceptor to add auth token and set dynamic baseURL
 api.interceptors.request.use(
   (config) => {
+    // Set the baseURL dynamically for each request
+    config.baseURL = `${getApiUrl()}/api`;
+    
     const token = Cookies.get('rimna_token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
