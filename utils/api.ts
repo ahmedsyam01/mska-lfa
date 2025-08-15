@@ -108,6 +108,7 @@ export const articlesAPI = {
     category?: string;
     search?: string;
     status?: string; // Added to allow filtering by status
+    trending?: string | boolean; // Allow trending flag
   }) => api.get('/articles', { params }),
   
   getById: (id: string) => api.get(`/articles/${id}`),
