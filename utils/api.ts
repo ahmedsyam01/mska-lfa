@@ -6,7 +6,8 @@ const getApiUrl = (): string => {
   const envUrl = process.env.NEXT_PUBLIC_API_URL;
   const isRailway = typeof window !== 'undefined' && window.location.hostname.includes('railway.app');
   
-  const finalUrl = isRailway && envUrl === 'http://localhost:3001' 
+  // Temporary: Force Railway URL when on Railway domain (regardless of env var)
+  const finalUrl = isRailway 
     ? 'https://rimna-backend-production.up.railway.app'
     : envUrl || 'http://localhost:3001';
     
@@ -19,6 +20,7 @@ const getApiUrl = (): string => {
     console.log('Is localhost env?:', envUrl === 'http://localhost:3001');
     console.log('API_BASE_URL (final):', finalUrl);
     console.log('Final API URL:', `${finalUrl}/api`);
+    console.log('🚨 FORCED Railway URL when on Railway domain');
   }
   
   return finalUrl;
