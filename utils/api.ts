@@ -185,6 +185,46 @@ export const uploadAPI = {
 export const adminAPI = {
   getDashboard: () => api.get('/admin/dashboard'),
   
+  // Users management
+  getUsers: (params?: { page?: number; limit?: number }) => 
+    api.get('/admin/users', { params }),
+  
+  toggleUserStatus: (userId: string) => 
+    api.post(`/admin/users/${userId}/toggle-status`),
+  
+  changeUserRole: (userId: string, role: string) => 
+    api.post(`/admin/users/${userId}/role`, { role }),
+  
+  deleteUser: (userId: string) => 
+    api.delete(`/admin/users/${userId}`),
+  
+  // Articles management
+  getArticles: (params?: { page?: number; limit?: number }) => 
+    api.get('/admin/articles', { params }),
+  
+  approveArticle: (articleId: string) => 
+    api.post(`/admin/articles/${articleId}/approve`),
+  
+  rejectArticle: (articleId: string) => 
+    api.post(`/admin/articles/${articleId}/reject`),
+  
+  deleteArticle: (articleId: string) => 
+    api.delete(`/admin/articles/${articleId}`),
+  
+  // Reports management
+  getReports: (params?: { page?: number; limit?: number }) => 
+    api.get('/admin/reports', { params }),
+  
+  approveReport: (reportId: string) => 
+    api.post(`/admin/reports/${reportId}/approve`),
+  
+  rejectReport: (reportId: string) => 
+    api.post(`/admin/reports/${reportId}/reject`),
+  
+  deleteReport: (reportId: string) => 
+    api.delete(`/admin/reports/${reportId}`),
+  
+  // Generic content actions
   approveContent: (contentType: string, contentId: string) => 
     api.post(`/admin/${contentType}/${contentId}/approve`),
   

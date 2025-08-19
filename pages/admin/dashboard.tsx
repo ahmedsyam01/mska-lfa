@@ -159,14 +159,9 @@ const AdminDashboard: React.FC = () => {
     setUsersLoading(true);
     setUsersError(null);
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/users?page=${page}&limit=${USERS_LIMIT}`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل تحميل المستخدمين');
-      const data = await res.json();
-      setUsers(data.users);
-      setUsersTotalPages(data.pagination.pages);
+      const response = await adminAPI.getUsers({ page, limit: USERS_LIMIT });
+      setUsers(response.data.users);
+      setUsersTotalPages(response.data.pagination.pages);
     } catch (e: any) {
       setUsersError(e.message || 'حدث خطأ');
     } finally {
@@ -182,8 +177,7 @@ const AdminDashboard: React.FC = () => {
   const handleToggleUser = async (id: string, isActive: boolean, role: string) => {
     if (role === 'ADMIN') return alert('لا يمكن تعديل حالة المدير');
     try {
-      const res = await fetch(`/api/admin/users/${id}/toggle-status`, { method: 'POST' });
-      if (!res.ok) throw new Error('فشل التغيير');
+      await adminAPI.toggleUserStatus(id);
       fetchUsers(usersPage);
     } catch {
       alert('حدث خطأ أثناء التغيير');
@@ -198,12 +192,7 @@ const AdminDashboard: React.FC = () => {
   const handleChangeRole = async (id: string, newRole: string) => {
     setRoleLoading(id);
     try {
-      const res = await fetch(`/api/admin/users/${id}/role`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: newRole })
-      });
-      if (!res.ok) throw new Error('فشل تغيير الدور');
+      await adminAPI.changeUserRole(id, newRole);
       fetchUsers(usersPage);
     } catch {
       alert('حدث خطأ أثناء تغيير الدور');
@@ -216,8 +205,7 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع.')) return;
     setDeleteLoading(id);
     try {
-      const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('فشل الحذف');
+      await adminAPI.deleteUser(id);
       fetchUsers(usersPage);
     } catch {
       alert('حدث خطأ أثناء الحذف');
@@ -230,14 +218,9 @@ const AdminDashboard: React.FC = () => {
     setArticlesLoading(true);
     setArticlesError(null);
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/articles?page=${page}&limit=${CONTENT_LIMIT}`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل تحميل المقالات');
-      const data = await res.json();
-      setArticles(data.articles);
-      setArticlesTotalPages(data.pagination.pages);
+      const response = await adminAPI.getArticles({ page, limit: CONTENT_LIMIT });
+      setArticles(response.data.articles);
+      setArticlesTotalPages(response.data.pagination.pages);
     } catch (e: any) {
       setArticlesError(e.message || 'حدث خطأ');
     } finally {
@@ -249,14 +232,9 @@ const AdminDashboard: React.FC = () => {
     setReportsLoading(true);
     setReportsError(null);
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/reports?page=${page}&limit=${CONTENT_LIMIT}`, {
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل تحميل البلاغات');
-      const data = await res.json();
-      setReports(data.reports);
-      setReportsTotalPages(data.pagination.pages);
+      const response = await adminAPI.getReports({ page, limit: CONTENT_LIMIT });
+      setReports(response.data.reports);
+      setReportsTotalPages(response.data.pagination.pages);
     } catch (e: any) {
       setReportsError(e.message || 'حدث خطأ');
     } finally {
@@ -275,15 +253,11 @@ const AdminDashboard: React.FC = () => {
   const handleApproveArticle = async (id: string) => {
     setArticleActionLoading(id + '-approve');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/articles/${id}/approve`, {
-        method: 'POST',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الموافقة');
+      await adminAPI.approveArticle(id);
       fetchArticles(articlesPage);
-    } catch {
-      alert('حدث خطأ أثناء الموافقة');
+    } catch (error) {
+      console.error('Error approving article:', error);
+      alert('فشل في الموافقة على المقال');
     } finally {
       setArticleActionLoading(null);
     }
@@ -292,15 +266,11 @@ const AdminDashboard: React.FC = () => {
   const handleRejectArticle = async (id: string) => {
     setArticleActionLoading(id + '-reject');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/articles/${id}/reject`, {
-        method: 'POST',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الرفض');
+      await adminAPI.rejectArticle(id);
       fetchArticles(articlesPage);
-    } catch {
-      alert('حدث خطأ أثناء الرفض');
+    } catch (error) {
+      console.error('Error rejecting article:', error);
+      alert('فشل في رفض المقال');
     } finally {
       setArticleActionLoading(null);
     }
@@ -310,15 +280,11 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا المقال؟ لا يمكن التراجع.')) return;
     setArticleActionLoading(id + '-delete');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/articles/${id}`, {
-        method: 'DELETE',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الحذف');
+      await adminAPI.deleteArticle(id);
       fetchArticles(articlesPage);
-    } catch {
-      alert('حدث خطأ أثناء الحذف');
+    } catch (error) {
+      console.error('Error deleting article:', error);
+      alert('فشل في حذف المقال');
     } finally {
       setArticleActionLoading(null);
     }
@@ -331,15 +297,11 @@ const AdminDashboard: React.FC = () => {
   const handleApproveReport = async (id: string) => {
     setReportActionLoading(id + '-approve');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/reports/${id}/approve`, {
-        method: 'POST',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الموافقة');
+      await adminAPI.approveReport(id);
       fetchReports(reportsPage);
-    } catch {
-      alert('حدث خطأ أثناء الموافقة');
+    } catch (error) {
+      console.error('Error approving report:', error);
+      alert('فشل في الموافقة على البلاغ');
     } finally {
       setReportActionLoading(null);
     }
@@ -348,15 +310,11 @@ const AdminDashboard: React.FC = () => {
   const handleRejectReport = async (id: string) => {
     setReportActionLoading(id + '-reject');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/reports/${id}/reject`, {
-        method: 'POST',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الرفض');
+      await adminAPI.rejectReport(id);
       fetchReports(reportsPage);
-    } catch {
-      alert('حدث خطأ أثناء الرفض');
+    } catch (error) {
+      console.error('Error rejecting report:', error);
+      alert('فشل في رفض البلاغ');
     } finally {
       setReportActionLoading(null);
     }
@@ -366,15 +324,11 @@ const AdminDashboard: React.FC = () => {
     if (!window.confirm('هل أنت متأكد أنك تريد حذف هذا البلاغ؟ لا يمكن التراجع.')) return;
     setReportActionLoading(id + '-delete');
     try {
-      const token = Cookies.get('rimna_token');
-      const res = await fetch(`/api/admin/reports/${id}`, {
-        method: 'DELETE',
-        headers: token ? { 'Authorization': `Bearer ${token}` } : {},
-      });
-      if (!res.ok) throw new Error('فشل الحذف');
+      await adminAPI.deleteReport(id);
       fetchReports(reportsPage);
-    } catch {
-      alert('حدث خطأ أثناء الحذف');
+    } catch (error) {
+      console.error('Error deleting report:', error);
+      alert('فشل في حذف البلاغ');
     } finally {
       setReportActionLoading(null);
     }
