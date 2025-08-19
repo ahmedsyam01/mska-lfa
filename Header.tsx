@@ -85,6 +85,12 @@ const Header = () => {
             <Link href="/about" className="text-gray-700 hover:text-primary-600 px-3 py-2 text-sm font-medium">
               {t('nav.about')}
             </Link>
+            <Link 
+              href="/admin/login" 
+              className="text-blue-600 hover:text-blue-700 px-3 py-2 text-sm font-medium border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
+            >
+              لوحة الإدارة
+            </Link>
           </nav>
 
           {/* Right side actions */}
@@ -224,6 +230,12 @@ const Header = () => {
               className="text-gray-700 hover:text-primary-600 block px-3 py-2 text-base font-medium"
             >
               {t('nav.about')}
+            </Link>
+            <Link
+              href="/admin/login"
+              className="text-blue-600 hover:text-blue-700 block px-3 py-2 text-base font-medium border-r-4 border-blue-200 hover:bg-blue-50"
+            >
+              لوحة الإدارة
             </Link>
           </div>
         </div>
