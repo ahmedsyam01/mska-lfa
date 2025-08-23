@@ -3,7 +3,7 @@ import Layout from '../components/Layout/Layout';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { articlesAPI } from '../utils/api';
-import { Clock, User, Eye } from 'lucide-react';
+import { Clock, User, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface NewsArticle {
   id: string;
@@ -21,14 +21,27 @@ interface NewsArticle {
   views: number;
 }
 
+interface PaginationInfo {
+  page: number;
+  limit: number;
+  total: number;
+  pages: number;
+}
+
 const Page2: React.FC = () => {
   const { t } = useTranslation('common');
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 2,
+    limit: 12,
+    total: 0,
+    pages: 0
+  });
 
   useEffect(() => {
-    const fetchNews = async () => {
+    const fetchPage2News = async () => {
       try {
         setLoading(true);
         const response = await articlesAPI.getAll({
@@ -36,64 +49,23 @@ const Page2: React.FC = () => {
           limit: 12,
           status: 'published'
         });
-        setArticles(response.data.articles || []);
+        
+        if (response.data.articles) {
+          setArticles(response.data.articles);
+        }
+        
+        if (response.data.pagination) {
+          setPagination(response.data.pagination);
+        }
       } catch (err) {
-        setError('فشل في تحميل الأخبار');
-        // Fallback to mock data
-        const mockArticles: NewsArticle[] = [
-          {
-            id: '1',
-            title: 'تطورات اقتصادية جديدة في موريتانيا',
-            titleAr: 'تطورات اقتصادية جديدة في موريتانيا',
-            excerpt: 'شهدت موريتانيا تطورات اقتصادية مهمة في الأشهر الأخيرة...',
-            excerptAr: 'شهدت موريتانيا تطورات اقتصادية مهمة في الأشهر الأخيرة...',
-            author: 'أحمد محمد',
-            authorAr: 'أحمد محمد',
-            publishedAt: '2024-01-15',
-            category: 'اقتصاد',
-            categoryAr: 'اقتصاد',
-            image: '/images/news/economics-1.jpg',
-            readTime: '5 دقائق',
-            views: 1250
-          },
-          {
-            id: '2',
-            title: 'مشاريع تعليمية في المناطق الريفية',
-            titleAr: 'مشاريع تعليمية في المناطق الريفية',
-            excerpt: 'تم إطلاق عدة مشاريع تعليمية جديدة في المناطق الريفية...',
-            excerptAr: 'تم إطلاق عدة مشاريع تعليمية جديدة في المناطق الريفية...',
-            author: 'فاطمة أحمد',
-            authorAr: 'فاطمة أحمد',
-            publishedAt: '2024-01-14',
-            category: 'تعليم',
-            categoryAr: 'تعليم',
-            image: '/images/news/education-rural.jpg',
-            readTime: '4 دقائق',
-            views: 980
-          },
-          {
-            id: '3',
-            title: 'تطورات في القطاع الصحي',
-            titleAr: 'تطورات في القطاع الصحي',
-            excerpt: 'شهد القطاع الصحي في موريتانيا تطورات كبيرة...',
-            excerptAr: 'شهد القطاع الصحي في موريتانيا تطورات كبيرة...',
-            author: 'د. محمد علي',
-            authorAr: 'د. محمد علي',
-            publishedAt: '2024-01-13',
-            category: 'صحة',
-            categoryAr: 'صحة',
-            image: '/images/news/healthcare-mobile.jpg',
-            readTime: '6 دقائق',
-            views: 1100
-          }
-        ];
-        setArticles(mockArticles);
+        setError('فشل في تحميل الأخبار من الخادم');
+        setArticles([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchNews();
+    fetchPage2News();
   }, []);
 
   if (loading) {
@@ -117,12 +89,20 @@ const Page2: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">أخبار موريتانيا - الصفحة 2</h1>
-            <p className="text-xl text-gray-600">أحدث الأخبار والتطورات في البلاد</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">الصفحة 2</h1>
+            <p className="text-xl text-gray-600">أخبار موريتانيا - الصفحة الثانية</p>
+          </div>
+
+          {/* Pagination Info */}
+          <div className="text-center mb-8">
+            <div className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full inline-flex items-center gap-2">
+              <span className="font-medium">الصفحة {pagination.page} من {pagination.pages}</span>
+              <span className="text-sm">({pagination.total} مقالة)</span>
+            </div>
           </div>
 
           {/* News Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {articles.map((article) => (
               <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
                 <div className="relative h-48">
@@ -168,18 +148,30 @@ const Page2: React.FC = () => {
             ))}
           </div>
 
-          {/* Pagination Info */}
-          <div className="mt-12 text-center">
-            <p className="text-gray-600 mb-4">الصفحة 2 من الأخبار</p>
-            <div className="flex justify-center gap-2">
-              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-                السابق
-              </button>
-              <span className="px-4 py-2 bg-blue-600 text-white rounded-md">2</span>
-              <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-                التالي
-              </button>
+          {/* Pagination Navigation */}
+          <div className="flex justify-center items-center gap-4">
+            <a
+              href="/"
+              className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
+            >
+              <ChevronRight className="w-4 h-4" />
+              الصفحة السابقة
+            </a>
+            
+            <div className="flex items-center gap-2">
+              <span className="px-3 py-2 bg-blue-600 text-white rounded-md font-medium">
+                {pagination.page}
+              </span>
+              <span className="text-gray-600">من {pagination.pages}</span>
             </div>
+            
+            <a
+              href="/3"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200"
+            >
+              الصفحة التالية
+              <ChevronLeft className="w-4 h-4" />
+            </a>
           </div>
         </div>
       </div>

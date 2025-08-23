@@ -28,25 +28,25 @@ interface PaginationInfo {
   pages: number;
 }
 
-const Page8: React.FC = () => {
+const Page11: React.FC = () => {
   const { t } = useTranslation('common');
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationInfo>({
-    page: 8,
+    page: 11,
     limit: 12,
     total: 0,
     pages: 0
   });
 
   useEffect(() => {
-    const fetchPage8News = async () => {
+    const fetchPage11News = async () => {
       try {
         setLoading(true);
         setError(null);
         const response = await articlesAPI.getAll({
-          page: 8,
+          page: 11,
           limit: 12,
           status: 'published'
         });
@@ -66,7 +66,7 @@ const Page8: React.FC = () => {
       }
     };
 
-    fetchPage8News();
+    fetchPage11News();
   }, []);
 
   if (loading) {
@@ -75,7 +75,7 @@ const Page8: React.FC = () => {
         <div className="min-h-screen bg-gray-50 py-8" dir="rtl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-pink-600 mx-auto"></div>
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-emerald-600 mx-auto"></div>
               <p className="mt-4 text-lg text-gray-600">جاري التحميل...</p>
             </div>
           </div>
@@ -112,13 +112,13 @@ const Page8: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">الصفحة 8</h1>
-            <p className="text-xl text-gray-600">أخبار موريتانيا - الصفحة الثامنة</p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">الصفحة 11</h1>
+            <p className="text-xl text-gray-600">أخبار موريتانيا - الصفحة الحادية عشرة</p>
           </div>
 
           {/* Pagination Info */}
           <div className="text-center mb-8">
-            <div className="bg-pink-100 text-pink-800 px-4 py-2 rounded-full inline-flex items-center gap-2">
+            <div className="bg-emerald-100 text-emerald-800 px-4 py-2 rounded-full inline-flex items-center gap-2">
               <span className="font-medium">الصفحة {pagination.page} من {pagination.pages}</span>
               <span className="text-sm">({pagination.total} مقالة)</span>
             </div>
@@ -135,7 +135,7 @@ const Page8: React.FC = () => {
                       alt={article.titleAr || article.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 right-4 bg-pink-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <div className="absolute top-4 right-4 bg-emerald-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                       {article.categoryAr || article.category}
                     </div>
                   </div>
@@ -163,7 +163,7 @@ const Page8: React.FC = () => {
                         <Eye className="w-4 h-4" />
                         <span>{article.views} مشاهدة</span>
                       </div>
-                      <button className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors duration-200">
+                      <button className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors duration-200">
                         اقرأ المزيد
                       </button>
                     </div>
@@ -182,7 +182,7 @@ const Page8: React.FC = () => {
           {/* Pagination Navigation */}
           <div className="flex justify-center items-center gap-4">
             <a
-              href="/7"
+              href="/10"
               className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
             >
               <ChevronRight className="w-4 h-4" />
@@ -190,19 +190,15 @@ const Page8: React.FC = () => {
             </a>
             
             <div className="flex items-center gap-2">
-              <span className="px-3 py-2 bg-pink-600 text-white rounded-md font-medium">
+              <span className="px-3 py-2 bg-emerald-600 text-white rounded-md font-medium">
                 {pagination.page}
               </span>
               <span className="text-gray-600">من {pagination.pages}</span>
             </div>
             
-            <a
-              href="/9"
-              className="flex items-center gap-2 px-4 py-2 bg-pink-600 text-white rounded-md hover:bg-pink-700 transition-colors duration-200"
-            >
-              الصفحة التالية
-              <ChevronLeft className="w-4 h-4" />
-            </a>
+            <div className="px-4 py-2 bg-gray-100 text-gray-500 rounded-md">
+              آخر صفحة
+            </div>
           </div>
         </div>
       </div>
@@ -218,4 +214,4 @@ export async function getStaticProps({ locale }: { locale: string }) {
   };
 }
 
-export default Page8;
+export default Page11;
