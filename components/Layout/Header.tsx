@@ -26,7 +26,6 @@ const Header: React.FC = () => {
     { name: 'جهوية', href: '/regional' },
     { name: 'رياضة', href: '/sport' },
     { name: 'مدونات', href: '/blog' },
-    { name: 'بحث', href: '/search' },
     { name: 'اتصل بنا', href: '/contact' },
   ];
 
