@@ -35,15 +35,20 @@ const Page2: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await articlesAPI.getAll({
-          limit: 20,
-          status: 'published'
+        // Use the same API call pattern as the news page
+        const response = await articlesAPI.getAll({ 
+          status: 'PUBLISHED', 
+          limit: 20 
         });
-
-        if (response.data.articles) {
+        
+        if (response.data && response.data.articles) {
           setArticles(response.data.articles);
+          console.log('Articles fetched for page 2:', response.data.articles.length);
+        } else {
+          setArticles([]);
         }
       } catch (err) {
+        console.error('Error fetching articles for page 2:', err);
         setError('فشل في تحميل الأخبار من الخادم');
         setArticles([]);
       } finally {
