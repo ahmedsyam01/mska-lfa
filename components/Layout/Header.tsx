@@ -22,14 +22,12 @@ const Header: React.FC = () => {
     { name: 'أخبار', href: '/news' },
     { name: 'تغطيات', href: '/reports', isHighlighted: true },
     { name: 'كُتاب موريتانيا', href: '/articles' },
-    { name: 'Français', href: '/fr' },
-    { name: 'EN', href: '/en' },
+
     { name: 'مواقع', href: '/sites' },
     { name: 'حكومية', href: '/government' },
     { name: 'جهوية', href: '/regional' },
     { name: 'رياضة', href: '/sport' },
     { name: 'مدونات', href: '/blog' },
-    { name: 'بحث', href: 'https://www.rimnow.com/search.htm' },
     { name: 'اتصل بنا', href: '/contact' },
   ];
 
