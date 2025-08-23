@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout/Layout';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { MapPin, Users, Building, Tree } from 'lucide-react';
+import { MapPin, Users, Building, Trees } from 'lucide-react';
 
 interface RegionalInfo {
   id: string;
@@ -165,7 +165,7 @@ const RegionalPage: React.FC = () => {
                 <p>بلدية</p>
               </div>
               <div>
-                <Tree className="w-12 h-12 mx-auto mb-3" />
+                <Trees className="w-12 h-12 mx-auto mb-3" />
                 <h3 className="text-xl font-bold">1M+</h3>
                 <p>كم² مساحة</p>
               </div>
@@ -204,7 +204,7 @@ const RegionalPage: React.FC = () => {
                       <span>السكان: {region.population}</span>
                     </div>
                     <div className="flex items-center gap-2 text-sm text-gray-600">
-                      <Tree className="w-4 h-4 text-purple-600" />
+                      <Trees className="w-4 h-4 text-purple-600" />
                       <span>المساحة: {region.area}</span>
                     </div>
                   </div>
