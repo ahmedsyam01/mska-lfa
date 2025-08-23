@@ -38,37 +38,8 @@ const SportPage: React.FC = () => {
         setSportsNews(response.data.articles || []);
       } catch (err) {
         console.error('Error fetching sports news:', err);
-        setError('فشل في تحميل أخبار الرياضة');
-        // Fallback to mock data if API fails
-        setSportsNews([
-          {
-            id: '1',
-            title: 'بطولة كرة القدم المحلية',
-            content: 'أخبار وتحديثات عن بطولة كرة القدم المحلية في موريتانيا',
-            contentAr: 'أخبار وتحديثات عن بطولة كرة القدم المحلية في موريتانيا',
-            image: '/images/news/sports-festival.jpg',
-            createdAt: '2024-01-15',
-            category: 'sports'
-          },
-          {
-            id: '2',
-            title: 'منتخب موريتانيا الوطني',
-            content: 'أخبار وتطورات منتخب موريتانيا الوطني لكرة القدم',
-            contentAr: 'أخبار وتطورات منتخب موريتانيا الوطني لكرة القدم',
-            image: '/images/news/sports-festival.jpg',
-            createdAt: '2024-01-14',
-            category: 'sports'
-          },
-          {
-            id: '3',
-            title: 'رياضات أخرى',
-            content: 'أخبار الرياضات الأخرى في موريتانيا مثل السباحة والجري',
-            contentAr: 'أخبار الرياضات الأخرى في موريتانيا مثل السباحة والجري',
-            image: '/images/news/sports-festival.jpg',
-            createdAt: '2024-01-13',
-            category: 'sports'
-          }
-        ]);
+        setError('فشل في تحميل أخبار الرياضة من الخادم');
+        setSportsNews([]);
       } finally {
         setLoading(false);
       }

@@ -11,21 +11,17 @@ interface NewsArticle {
   titleAr?: string;
   excerpt: string;
   excerptAr?: string;
+  content: string;
+  contentAr?: string;
+  image?: string;
   author: string;
   authorAr?: string;
-  publishedAt: string;
   category: string;
   categoryAr?: string;
-  image?: string;
-  readTime: string;
+  createdAt: string;
+  readTime: number;
   views: number;
-}
-
-interface PaginationInfo {
-  page: number;
-  limit: number;
-  total: number;
-  pages: number;
+  status: string;
 }
 
 const Page7: React.FC = () => {
@@ -33,12 +29,6 @@ const Page7: React.FC = () => {
   const [articles, setArticles] = useState<NewsArticle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationInfo>({
-    page: 7,
-    limit: 12,
-    total: 0,
-    pages: 0
-  });
 
   useEffect(() => {
     const fetchPage7News = async () => {
@@ -46,17 +36,12 @@ const Page7: React.FC = () => {
         setLoading(true);
         setError(null);
         const response = await articlesAPI.getAll({
-          page: 7,
-          limit: 12,
+          limit: 20,
           status: 'published'
         });
-        
+
         if (response.data.articles) {
           setArticles(response.data.articles);
-        }
-        
-        if (response.data.pagination) {
-          setPagination(response.data.pagination);
         }
       } catch (err) {
         setError('فشل في تحميل الأخبار من الخادم');
@@ -65,7 +50,6 @@ const Page7: React.FC = () => {
         setLoading(false);
       }
     };
-
     fetchPage7News();
   }, []);
 
@@ -74,9 +58,9 @@ const Page7: React.FC = () => {
       <Layout>
         <div className="min-h-screen bg-gray-50 py-8" dir="rtl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
-              <p className="mt-4 text-lg text-gray-600">جاري التحميل...</p>
+            <div className="text-center py-12">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600 mx-auto"></div>
+              <p className="mt-4 text-gray-600">جاري تحميل الأخبار...</p>
             </div>
           </div>
         </div>
@@ -89,15 +73,9 @@ const Page7: React.FC = () => {
       <Layout>
         <div className="min-h-screen bg-gray-50 py-8" dir="rtl">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center">
-              <div className="bg-red-100 text-red-800 px-6 py-4 rounded-lg inline-block">
-                <p className="text-lg font-medium">{error}</p>
-                <button 
-                  onClick={() => window.location.reload()} 
-                  className="mt-4 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 transition-colors duration-200"
-                >
-                  إعادة المحاولة
-                </button>
+            <div className="text-center py-12">
+              <div className="bg-red-100 text-red-700 px-6 py-4 rounded-lg inline-block">
+                <p className="text-lg">{error}</p>
               </div>
             </div>
           </div>
@@ -113,62 +91,63 @@ const Page7: React.FC = () => {
           {/* Page Header */}
           <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">الصفحة 7</h1>
-            <p className="text-xl text-gray-600">أخبار موريتانيا - الصفحة السابعة</p>
+            <p className="text-xl text-gray-600">أخبار موريتانيا - مجموعة مختارة</p>
           </div>
 
-          {/* Pagination Info */}
+          {/* Articles Count */}
           <div className="text-center mb-8">
-            <div className="bg-indigo-100 text-indigo-800 px-4 py-2 rounded-full inline-flex items-center gap-2">
-              <span className="font-medium">الصفحة {pagination.page} من {pagination.pages}</span>
-              <span className="text-sm">({pagination.total} مقالة)</span>
+            <div className="bg-orange-100 text-orange-800 px-4 py-2 rounded-full inline-flex items-center gap-2">
+              <span className="font-medium">{articles.length} مقالة</span>
             </div>
           </div>
 
           {/* News Grid */}
           {articles.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
               {articles.map((article) => (
-                <div key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                  <div className="relative h-48">
-                    <img
-                      src={article.image || '/images/news/placeholder-1.jpg'}
-                      alt={article.titleAr || article.title}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                      {article.categoryAr || article.category}
+                <article key={article.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                  {article.image && (
+                    <div className="relative h-48">
+                      <img
+                        src={article.image}
+                        alt={article.titleAr || article.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
-                  </div>
+                  )}
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
+                    <div className="mb-3">
+                      <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                        {article.categoryAr || article.category}
+                      </span>
+                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2">
                       {article.titleAr || article.title}
                     </h3>
                     <p className="text-gray-600 mb-4 line-clamp-3">
                       {article.excerptAr || article.excerpt}
                     </p>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+                    <div className="flex items-center justify-between text-sm text-gray-500">
                       <div className="flex items-center gap-2">
                         <User className="w-4 h-4" />
                         <span>{article.authorAr || article.author}</span>
                       </div>
                       <div className="flex items-center gap-2">
                         <Clock className="w-4 h-4" />
-                        <span>{article.readTime}</span>
+                        <span>{article.readTime} دقيقة</span>
                       </div>
                     </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-gray-200">
+                      <span className="text-xs text-gray-500">
+                        {new Date(article.createdAt).toLocaleDateString('ar-MA')}
+                      </span>
+                      <div className="flex items-center gap-1 text-gray-500">
                         <Eye className="w-4 h-4" />
-                        <span>{article.views} مشاهدة</span>
+                        <span className="text-xs">{article.views}</span>
                       </div>
-                      <button className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors duration-200">
-                        اقرأ المزيد
-                      </button>
                     </div>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           ) : (
@@ -179,27 +158,18 @@ const Page7: React.FC = () => {
             </div>
           )}
 
-          {/* Pagination Navigation */}
+          {/* Navigation */}
           <div className="flex justify-center items-center gap-4">
-            <a
-              href="/6"
-              className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200"
-            >
+            <a href="/6" className="flex items-center gap-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors duration-200">
               <ChevronRight className="w-4 h-4" />
               الصفحة السابقة
             </a>
-            
             <div className="flex items-center gap-2">
-              <span className="px-3 py-2 bg-indigo-600 text-white rounded-md font-medium">
-                {pagination.page}
+              <span className="px-3 py-2 bg-orange-600 text-white rounded-md font-medium">
+                7
               </span>
-              <span className="text-gray-600">من {pagination.pages}</span>
             </div>
-            
-            <a
-              href="/8"
-              className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors duration-200"
-            >
+            <a href="/8" className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors duration-200">
               الصفحة التالية
               <ChevronLeft className="w-4 h-4" />
             </a>
