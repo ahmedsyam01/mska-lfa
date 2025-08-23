@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { Menu, X, Search } from 'lucide-react';
-import SearchBar from '../Search/SearchBar';
+import { Menu, X } from 'lucide-react';
 
 const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const router = useRouter();
 
   const navigationItems = [
@@ -31,7 +29,7 @@ const Header: React.FC = () => {
     { name: 'جهوية', href: '/regional' },
     { name: 'رياضة', href: '/sport' },
     { name: 'مدونات', href: '/blog' },
-    { name: 'بحث', href: '#', isSearch: true },
+    { name: 'بحث', href: '/search' },
     { name: 'اتصل بنا', href: '/contact' },
   ];
 
@@ -39,120 +37,76 @@ const Header: React.FC = () => {
     setIsMenuOpen(!isMenuOpen);
   };
 
-  const handleSearchClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsSearchOpen(true);
-  };
-
-  const closeSearch = () => {
-    setIsSearchOpen(false);
-  };
-
   return (
-    <>
-      <header className="bg-white shadow-md sticky top-0 z-40" dir="rtl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex-shrink-0">
-              <Link href="/" className="text-2xl font-bold text-blue-600">
-                ريمنا
-              </Link>
-            </div>
+    <header className="bg-white shadow-md sticky top-0 z-40" dir="rtl">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-16">
+          {/* Logo */}
+          <div className="flex-shrink-0">
+            <Link href="/" className="text-2xl font-bold text-blue-600">
+              ريمنا
+            </Link>
+          </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex space-x-8 space-x-reverse">
-              {navigationItems.map((item) => {
-                if (item.isSearch) {
-                  return (
-                    <button
-                      key={item.name}
-                      onClick={handleSearchClick}
-                      className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 flex items-center gap-2"
-                    >
-                      <Search className="w-4 h-4" />
-                      {item.name}
-                    </button>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
-                      item.isHighlighted
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : item.isActive && router.pathname === item.href
-                        ? 'text-blue-600'
-                        : 'text-gray-700 hover:text-blue-600'
-                    }`}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </nav>
-
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
-              <button
-                onClick={toggleMenu}
-                className="text-gray-700 hover:text-blue-600 p-2 rounded-md"
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex space-x-8 space-x-reverse">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${
+                  item.isHighlighted
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : item.isActive && router.pathname === item.href
+                    ? 'text-blue-600'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
               >
-                {isMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
-            </div>
+                {item.name}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Mobile menu button */}
+          <div className="lg:hidden">
+            <button
+              onClick={toggleMenu}
+              className="text-gray-700 hover:text-blue-600 p-2 rounded-md"
+            >
+              {isMenuOpen ? (
+                <X className="w-6 h-6" />
+              ) : (
+                <Menu className="w-6 h-6" />
+              )}
+            </button>
           </div>
         </div>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
-              {navigationItems.map((item) => {
-                if (item.isSearch) {
-                  return (
-                    <button
-                      key={item.name}
-                      onClick={handleSearchClick}
-                      className="w-full text-right text-gray-700 hover:text-blue-600 block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 flex items-center justify-end gap-2"
-                    >
-                      <Search className="w-4 h-4" />
-                      {item.name}
-                    </button>
-                  );
-                }
-
-                return (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
-                      item.isHighlighted
-                        ? 'bg-blue-600 text-white hover:bg-blue-700'
-                        : item.isActive && router.pathname === item.href
-                        ? 'text-blue-600'
-                        : 'text-gray-700 hover:text-blue-600'
-                    }`}
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
+      {/* Mobile Navigation */}
+      {isMenuOpen && (
+        <div className="lg:hidden">
+          <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t">
+            {navigationItems.map((item) => (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200 ${
+                  item.isHighlighted
+                    ? 'bg-blue-600 text-white hover:bg-blue-700'
+                    : item.isActive && router.pathname === item.href
+                    ? 'text-blue-600'
+                    : 'text-gray-700 hover:text-blue-600'
+                }`}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.name}
+              </Link>
+            ))}
           </div>
-        )}
-      </header>
-
-      {/* Search Modal */}
-      <SearchBar isOpen={isSearchOpen} onClose={closeSearch} />
-    </>
+        </div>
+      )}
+    </header>
   );
 };
 
