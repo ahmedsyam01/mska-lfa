@@ -111,12 +111,40 @@ const Dashboard: React.FC = () => {
         // Since /articles/stats endpoint doesn't exist in backend
         const [articlesResponse, featuredNewsResponse] = await Promise.all([
           api.get('/articles'), // Get all articles
-          api.get('/featured-news?limit=5')
+          api.get('/featured-news?limit=5').catch(() => ({ data: [] })) // Fallback if featured-news fails
         ]);
 
         // Calculate statistics from the articles data
         const allArticles = articlesResponse.data.articles || [];
-        const userArticles = allArticles.filter((article: any) => article.authorId === user.id);
+        
+        // For reporters, we need to check both authorId and also look for articles created by the user
+        // Some articles might not have authorId set correctly, so we'll also check by user ID in other ways
+        const userArticles = allArticles.filter((article: any) => {
+          // Check if article has authorId that matches user
+          if (article.authorId === user.id) return true;
+          
+          // If no authorId, check if it's a user-created article (not imported)
+          // Imported articles usually have sourceName, user-created ones don't
+          if (!article.authorId && !article.sourceName && article.status === 'PENDING') {
+            // This is likely a user-created article that needs authorId
+            return true;
+          }
+          
+          return false;
+        });
+        
+        console.log('🔍 Dashboard Debug:', {
+          totalArticlesFound: allArticles.length,
+          userArticlesFound: userArticles.length,
+          userArticles: userArticles.map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            authorId: a.authorId,
+            sourceName: a.sourceName,
+            status: a.status,
+            createdAt: a.createdAt
+          }))
+        });
         
         const totalArticles = userArticles.length;
         const pendingArticles = userArticles.filter((article: any) => article.status === 'PENDING').length;
@@ -140,14 +168,14 @@ const Dashboard: React.FC = () => {
             pendingReports: 0
           },
           recentArticles,
-          featuredNews: featuredNewsResponse.data
+          featuredNews: featuredNewsResponse.data || []
         });
       } else {
         // For regular users, fetch reports statistics
         const [reportsStatsResponse, reportsResponse, featuredNewsResponse] = await Promise.all([
           api.get('/reports/stats?reporterId=' + user.id), // Get reports statistics for the user
           api.get('/reports?limit=5'),
-          api.get('/featured-news?limit=5')
+          api.get('/featured-news?limit=5').catch(() => ({ data: [] })) // Fallback if featured-news fails
         ]);
 
         setData({
@@ -162,7 +190,7 @@ const Dashboard: React.FC = () => {
             pendingArticles: 0
           },
           recentReports: reportsResponse.data.reports,
-          featuredNews: featuredNewsResponse.data
+          featuredNews: featuredNewsResponse.data || []
         });
       }
     } catch (error) {
@@ -307,6 +335,18 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="max-w-7xl mx-auto px-6 py-8">
+          {/* Loading State */}
+          {loading && (
+            <div className="flex items-center justify-center py-12 mb-8">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-gradient-to-br from-mauritania-green to-mauritania-gold rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                  <RefreshCw className="h-8 w-8 text-white" />
+                </div>
+                <p className="text-gray-600 text-lg">جاري تحديث البيانات...</p>
+              </div>
+            </div>
+          )}
+          
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {user?.role === 'REPORTER' ? (
@@ -325,6 +365,9 @@ const Dashboard: React.FC = () => {
                   <div className="mt-4 flex items-center text-sm text-green-600">
                     <TrendingUp className="w-4 h-4 ml-1" />
                     <span>مقالات منشورة</span>
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500">
+                    آخر تحديث: {new Date().toLocaleTimeString('ar-SA')}
                   </div>
                 </div>
 
