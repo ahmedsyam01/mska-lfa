@@ -15,6 +15,7 @@ const RegisterPage: React.FC = () => {
     password: '',
     firstName: '',
     lastName: '',
+    role: 'USER',
     phoneNumber: '',
     location: '',
     bio: '',
@@ -181,6 +182,77 @@ const RegisterPage: React.FC = () => {
                   </p>
                 )}
               </div>
+            </div>
+            
+            {/* Role Selection */}
+            <div className="space-y-2">
+              <label className="block text-sm font-semibold text-gray-700 text-right">
+                نوع الحساب
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'USER' }))}
+                  className={`p-4 rounded-2xl border-2 transition-all duration-300 text-right ${
+                    formData.role === 'USER'
+                      ? 'border-mauritania-green bg-gradient-to-r from-mauritania-green/10 to-mauritania-green/20 shadow-lg'
+                      : 'border-gray-200 hover:border-mauritania-green/30 hover:shadow-md'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      formData.role === 'USER'
+                        ? 'bg-mauritania-green text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <User className="h-5 w-5" />
+                    </div>
+                    <div className="text-right">
+                      <h3 className={`font-bold text-lg ${
+                        formData.role === 'USER' ? 'text-mauritania-green' : 'text-gray-700'
+                      }`}>
+                        مواطن
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        مشاهدة المحتوى والتعليق
+                      </p>
+                    </div>
+                  </div>
+                </button>
+                
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, role: 'REPORTER' }))}
+                  className={`p-4 rounded-2xl border-2 transition-all duration-300 text-right ${
+                    formData.role === 'REPORTER'
+                      ? 'border-mauritania-gold bg-gradient-to-r from-mauritania-gold/10 to-mauritania-gold/20 shadow-lg'
+                      : 'border-gray-200 hover:border-mauritania-gold/30 hover:shadow-md'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                      formData.role === 'REPORTER'
+                        ? 'bg-mauritania-gold text-white'
+                        : 'bg-gray-100 text-gray-600'
+                    }`}>
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="text-right">
+                      <h3 className={`font-bold text-lg ${
+                        formData.role === 'REPORTER' ? 'text-mauritania-gold' : 'text-gray-700'
+                      }`}>
+                        صحفي
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        نشر المقالات والتقارير
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              </div>
+              <p className="text-xs text-gray-500 text-center mt-2">
+                يمكنك تغيير نوع الحساب لاحقاً من إعدادات الملف الشخصي
+              </p>
             </div>
             
             {/* Username Field */}
