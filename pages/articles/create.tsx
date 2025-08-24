@@ -110,7 +110,6 @@ const CreateArticle: React.FC = () => {
         category: formData.category,
         tags: formData.tags,
         sourceUrl: formData.sourceUrl,
-        status: 'PENDING',
         isBreaking: false,
         isFeatured: false
       };
