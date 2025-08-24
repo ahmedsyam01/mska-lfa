@@ -25,7 +25,8 @@ import {
   ArrowRight,
   Sparkles,
   Target,
-  Zap
+  Zap,
+  User
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -59,11 +60,14 @@ interface DashboardData {
       comments: number;
     };
   }>;
-  trending: Array<{
+  featuredNews: Array<{
     id: string;
-    topic: string;
-    count: number;
-    weekOf: string;
+    title: string;
+    excerpt: string;
+    category: string;
+    imageUrl?: string;
+    views: number;
+    createdAt: string;
   }>;
 }
 
@@ -82,29 +86,29 @@ const Dashboard: React.FC = () => {
     try {
       if (user?.role === 'REPORTER') {
         // For reporters, fetch articles instead of reports
-        const [statsResponse, articlesResponse, trendingResponse] = await Promise.all([
+        const [statsResponse, articlesResponse, featuredNewsResponse] = await Promise.all([
           api.get('/users/stats'),
           api.get('/articles?limit=5&authorId=' + user.id),
-          api.get('/trending?limit=5')
+          api.get('/featured-news?limit=5')
         ]);
 
         setData({
           stats: statsResponse.data,
           recentArticles: articlesResponse.data.articles,
-          trending: trendingResponse.data
+          featuredNews: featuredNewsResponse.data
         });
       } else {
         // For regular users, fetch reports
-        const [statsResponse, reportsResponse, trendingResponse] = await Promise.all([
+        const [statsResponse, reportsResponse, featuredNewsResponse] = await Promise.all([
           api.get('/users/stats'),
           api.get('/reports?limit=5'),
-          api.get('/trending?limit=5')
+          api.get('/featured-news?limit=5')
         ]);
 
         setData({
           stats: statsResponse.data,
           recentReports: reportsResponse.data.reports,
-          trending: trendingResponse.data
+          featuredNews: featuredNewsResponse.data
         });
       }
     } catch (error) {
@@ -186,43 +190,41 @@ const Dashboard: React.FC = () => {
     <Layout title="لوحة التحكم - ريمنا">
       <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5">
         {/* Header Section */}
-        <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
-          <div className="max-w-7xl mx-auto px-6 py-8">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-              <div className="flex-1">
-                <div className="flex items-center gap-4 mb-3">
-                  <div className="w-16 h-16 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg">
-                    <Target className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-3xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent">
-                      لوحة التحكم
-                    </h1>
-                    <p className="text-gray-600 text-lg">
-                      مرحباً بعودتك، {user?.firstName || user?.username} 👋
-                    </p>
-                  </div>
-                </div>
-                <p className="text-gray-600">
-                  هنا يمكنك إدارة حسابك والتقارير ومتابعة نشاطك
-                </p>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-3">
+        <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20 p-6 mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent mb-2">
+                لوحة التحكم
+              </h1>
+              <p className="text-gray-600 text-lg">
+                مرحباً {user?.firstName} {user?.lastName}، كيف حالك اليوم؟
+              </p>
+            </div>
+            <div className="flex gap-4">
+              {user?.role === 'REPORTER' ? (
+                <Link
+                  href="/articles/create"
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-gold to-mauritania-red text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+                >
+                  <Plus className="w-5 h-5 ml-2" />
+                  إنشاء مقال جديد
+                </Link>
+              ) : (
                 <Link
                   href="/reports/create"
-                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold shadow-lg"
+                  className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
                 >
                   <Plus className="w-5 h-5 ml-2" />
                   إنشاء بلاغ جديد
                 </Link>
-                <Link
-                  href="/profile"
-                  className="inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm text-gray-700 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300 font-semibold border border-gray-200"
-                >
-                  <Settings className="w-5 h-5 ml-2" />
-                  الملف الشخصي
-                </Link>
-              </div>
+              )}
+              <Link
+                href="/profile"
+                className="inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/20 text-gray-700 rounded-2xl hover:bg-white hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+              >
+                <User className="w-5 h-5 ml-2" />
+                الملف الشخصي
+              </Link>
             </div>
           </div>
         </div>
@@ -505,7 +507,7 @@ const Dashboard: React.FC = () => {
                 </div>
               </div>
               <div className="p-6">
-                {data?.trending.length === 0 ? (
+                {data?.featuredNews.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                       <TrendingUp className="h-10 w-10 text-gray-400" />
@@ -514,8 +516,8 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {data?.trending.map((topic, index) => (
-                      <div key={topic.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-gold/30 hover:shadow-lg transition-all duration-300">
+                    {data?.featuredNews.map((news, index) => (
+                      <div key={news.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-gold/30 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center gap-4">
                           <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                             index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
@@ -527,16 +529,16 @@ const Dashboard: React.FC = () => {
                           </span>
                           <div>
                             <h3 className="font-semibold text-gray-900">
-                              {topic.topic}
+                              {news.title}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              {topic.count} ذكر
+                              {news.excerpt}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <BarChart3 className="w-4 h-4" />
-                          <span className="font-semibold">{topic.count}</span>
+                          <span className="font-semibold">{news.views}</span>
                         </div>
                       </div>
                     ))}
@@ -548,13 +550,15 @@ const Dashboard: React.FC = () => {
 
           {/* Quick Actions */}
           <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-8">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-gradient-to-br from-mauritania-green to-mauritania-gold rounded-xl flex items-center justify-center">
-                <Zap className="h-5 w-5 text-white" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-mauritania-green to-mauritania-gold rounded-xl flex items-center justify-center">
+                  <Zap className="h-5 w-5 text-white" />
+                </div>
+                <h2 className="text-2xl font-bold text-gray-900">إجراءات سريعة</h2>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900">إجراءات سريعة</h2>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {user?.role === 'REPORTER' ? (
                 // Reporter Actions
                 <Link
@@ -596,25 +600,6 @@ const Dashboard: React.FC = () => {
                   </div>
                 </Link>
               )}
-
-              <Link
-                href="/upload"
-                className="group p-6 bg-gradient-to-br from-blue-500/10 to-blue-600/20 rounded-2xl border border-blue-500/30 hover:border-blue-500/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Upload className="h-6 w-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-blue-600 transition-colors text-lg">
-                      رفع وسائط
-                    </h3>
-                    <p className="text-gray-600">
-                      رفع صور وفيديوهات
-                    </p>
-                  </div>
-                </div>
-              </Link>
 
               <Link
                 href="/trending"
