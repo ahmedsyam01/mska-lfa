@@ -35,13 +35,17 @@ const Page7: React.FC = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await articlesAPI.getAll({
+        const response = await articlesAPI.getAll({ 
+          status: 'PUBLISHED', 
           limit: 20,
-          status: 'published'
+          page: 7
         });
-
-        if (response.data.articles) {
+        
+        if (response.data && response.data.articles) {
           setArticles(response.data.articles);
+          console.log('Articles fetched for page 7:', response.data.articles.length);
+        } else {
+          setArticles([]);
         }
       } catch (err) {
         setError('فشل في تحميل الأخبار من الخادم');

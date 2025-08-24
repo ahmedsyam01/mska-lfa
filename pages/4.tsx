@@ -37,7 +37,8 @@ const Page4: React.FC = () => {
         setError(null);
         const response = await articlesAPI.getAll({ 
           status: 'PUBLISHED', 
-          limit: 20 
+          limit: 20,
+          page: 4
         });
         
         if (response.data && response.data.articles) {

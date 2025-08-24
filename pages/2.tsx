@@ -38,7 +38,8 @@ const Page2: React.FC = () => {
         // Use the same API call pattern as the news page
         const response = await articlesAPI.getAll({ 
           status: 'PUBLISHED', 
-          limit: 20 
+          limit: 20,
+          page: 2
         });
         
         if (response.data && response.data.articles) {
