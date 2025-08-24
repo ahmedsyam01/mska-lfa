@@ -85,7 +85,7 @@ const Profile: React.FC = () => {
     setError(null);
 
     try {
-      await api.put('/users/profile', formData);
+      await api.put('/users/me', formData);
       setSuccess(true);
       setIsEditing(false);
       
