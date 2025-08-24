@@ -126,30 +126,37 @@ const Dashboard: React.FC = () => {
         // Calculate statistics from the articles data
         const allArticles = articlesResponse.data.articles || [];
         
-        // For reporters, we need to check both authorId and also look for articles created by the user
-        // Some articles might not have authorId set correctly, so we'll also check by user ID in other ways
+        // For reporters, we need to detect articles that belong to the user
+        // Since all articles show "مجهول المصدر", we need to use alternative detection methods
+        // The key insight: user-created articles have no sourceName, imported articles have sourceName
         const userArticles = allArticles.filter((article: any) => {
-          // Check if article has authorId that matches user
-          if (article.authorId === user.id) return true;
-          
-          // If no authorId, check if it's a user-created article (not imported)
-          // Imported articles usually have sourceName, user-created ones don't
-          if (!article.authorId && !article.sourceName && article.status === 'PENDING') {
-            // This is likely a user-created article that needs authorId
+          // Method 1: Check if article has authorId that matches user
+          if (article.authorId === user.id) {
+            console.log('🔍 Found article with matching authorId:', article);
             return true;
           }
           
-          // Additional check: if article was created recently and has no sourceName, it might be user-created
-          if (!article.authorId && !article.sourceName) {
-            const articleDate = new Date(article.createdAt);
-            const now = new Date();
-            const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
-            
-            // If article was created in the last 7 days and has no sourceName, consider it user-created
-            if (daysDiff <= 7) {
-              console.log('🔍 Potential user article (recent, no sourceName):', article);
-              return true;
-            }
+          // Method 2: Check if it's a PENDING article (likely user-created)
+          if (article.status === 'PENDING') {
+            console.log('🔍 Found PENDING article (likely user-created):', article);
+            return true;
+          }
+          
+          // Method 3: Check if article has no sourceName (user-created) vs has sourceName (imported)
+          if (!article.sourceName) {
+            console.log('🔍 Found article with no sourceName (likely user-created):', article);
+            return true;
+          }
+          
+          // Method 4: Check if article was created recently and has no sourceName
+          const articleDate = new Date(article.createdAt);
+          const now = new Date();
+          const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
+          
+          // If article was created in the last 30 days and has no sourceName, consider it user-created
+          if (daysDiff <= 30 && !article.sourceName) {
+            console.log('🔍 Potential user article (recent, no sourceName):', article);
+            return true;
           }
           
           return false;
@@ -186,7 +193,14 @@ const Dashboard: React.FC = () => {
             sourceName: a.sourceName,
             status: a.status,
             createdAt: a.createdAt
-          }))
+          })),
+          // Summary of detection methods
+          detectionSummary: {
+            withAuthorId: allArticles.filter((a: any) => a.authorId === user.id).length,
+            pendingArticles: allArticles.filter((a: any) => a.status === 'PENDING').length,
+            withoutSourceName: allArticles.filter((a: any) => !a.sourceName).length,
+            withSourceName: allArticles.filter((a: any) => a.sourceName).length
+          }
         });
         
         const totalArticles = userArticles.length;
@@ -213,11 +227,11 @@ const Dashboard: React.FC = () => {
         // For regular users, fetch reports statistics
         const [reportsStatsResponse, reportsResponse, trendingResponse] = await Promise.all([
           api.get('/reports/stats?reporterId=' + user.id), // Get reports statistics for the user
-          api.get('/reports?limit=5'),
+        api.get('/reports?limit=5'),
           api.get('/trending?limit=5').catch(() => ({ data: [] })) // Fallback if trending fails
-        ]);
+      ]);
 
-        setData({
+      setData({
           stats: {
             totalReports: reportsStatsResponse.data.totalReports || 0,
             publishedReports: reportsStatsResponse.data.publishedReports || 0,
@@ -225,9 +239,9 @@ const Dashboard: React.FC = () => {
             totalViews: reportsStatsResponse.data.totalViews || 0,
             totalComments: reportsStatsResponse.data.totalComments || 0
           },
-          recentReports: reportsResponse.data.reports,
+        recentReports: reportsResponse.data.reports,
           featuredNews: trendingResponse.data || []
-        });
+      });
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
@@ -335,33 +349,15 @@ const Dashboard: React.FC = () => {
         {/* Header Section */}
         <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20 p-6 mb-8">
           <div className="flex items-center justify-between">
-            <div>
+              <div>
               <h1 className="text-3xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent mb-2">
                 لوحة التحكم
-              </h1>
+                </h1>
               <p className="text-gray-600 text-lg">
                 مرحباً {user?.firstName} {user?.lastName}، كيف حالك اليوم؟
-              </p>
-            </div>
+                </p>
+              </div>
             <div className="flex gap-4">
-              <button
-                onClick={handleRefresh}
-                disabled={loading}
-                className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
-              >
-                <RefreshCw className={`w-5 h-5 ml-2 ${loading ? 'animate-spin' : ''}`} />
-                تحديث البيانات
-              </button>
-              <button
-                onClick={() => {
-                  console.log('🔄 Manual refresh triggered');
-                  fetchDashboardData();
-                }}
-                className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
-              >
-                <RefreshCw className="w-5 h-5 ml-2" />
-                تحديث يدوي
-              </button>
               {user?.role === 'REPORTER' ? (
                 <Link
                   href="/articles/create"
@@ -379,13 +375,13 @@ const Dashboard: React.FC = () => {
                   إنشاء بلاغ جديد
                 </Link>
               )}
-              <Link
-                href="/profile"
+                <Link
+                  href="/profile"
                 className="inline-flex items-center px-6 py-3 bg-white/80 backdrop-blur-sm border border-white/20 text-gray-700 rounded-2xl hover:bg-white hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
-              >
+                >
                 <User className="w-5 h-5 ml-2" />
-                الملف الشخصي
-              </Link>
+                  الملف الشخصي
+                </Link>
             </div>
           </div>
         </div>
@@ -399,6 +395,30 @@ const Dashboard: React.FC = () => {
                   <RefreshCw className="h-8 w-8 text-white" />
                 </div>
                 <p className="text-gray-600 text-lg">جاري تحديث البيانات...</p>
+              </div>
+            </div>
+          )}
+          
+          {/* Debug Information - Only show in development */}
+          {process.env.NODE_ENV === 'development' && data && (
+            <div className="mb-8 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <h3 className="text-lg font-semibold text-yellow-800 mb-2">🔍 Debug Info (Development Only)</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                  <span className="font-medium">Total Articles:</span> {data.stats.totalArticles || 0}
+                </div>
+                <div>
+                  <span className="font-medium">Pending:</span> {data.stats.pendingArticles || 0}
+                </div>
+                <div>
+                  <span className="font-medium">Views:</span> {data.stats.totalViews || 0}
+                </div>
+                <div>
+                  <span className="font-medium">Comments:</span> {data.stats.totalComments || 0}
+                </div>
+              </div>
+              <div className="mt-2 text-xs text-yellow-700">
+                Check browser console for detailed debug logs
               </div>
             </div>
           )}
@@ -454,8 +474,8 @@ const Dashboard: React.FC = () => {
                     </div>
                     <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green/20 to-mauritania-green/30 rounded-2xl flex items-center justify-center">
                       <FileText className="h-6 w-6 text-mauritania-green" />
-                    </div>
-                  </div>
+              </div>
+            </div>
                   <div className="mt-4 flex items-center text-sm text-green-600">
                     <TrendingUp className="w-4 h-4 ml-1" />
                     <span>بلاغات مرسلة</span>
@@ -519,25 +539,25 @@ const Dashboard: React.FC = () => {
               // Recent Articles for Reporters
               <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
                 <div className="p-6 border-b border-white/20 bg-gradient-to-r from-mauritania-gold/5 to-mauritania-red/5">
-                  <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center">
                         <FileText className="h-5 w-5 text-white" />
                       </div>
                       <h2 className="text-xl font-bold text-gray-900">المقالات الأخيرة</h2>
                     </div>
-                    <Link
+                  <Link
                       href="/articles"
                       className="text-mauritania-gold hover:text-mauritania-red font-semibold transition-colors hover:underline flex items-center gap-1"
-                    >
-                      عرض الكل
+                  >
+                    عرض الكل
                       <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
+                  </Link>
                 </div>
-                <div className="p-6">
+              </div>
+              <div className="p-6">
                   {data?.recentArticles?.length === 0 ? (
-                    <div className="text-center py-12">
+                  <div className="text-center py-12">
                       <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FileText className="h-10 w-10 text-gray-400" />
                       </div>
@@ -621,46 +641,46 @@ const Dashboard: React.FC = () => {
                       >
                         <Plus className="w-5 h-5 ml-2" />
                         أنشئ أول بلاغ
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
                       {data?.recentReports?.map((report) => (
                         <div key={report.id} className="group p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-green/30 hover:shadow-lg transition-all duration-300">
                           <div className="flex items-center justify-between">
-                            <div className="flex-1">
+                        <div className="flex-1">
                               <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-mauritania-green transition-colors">
-                                {report.title}
-                              </h3>
+                            {report.title}
+                          </h3>
                               <div className="flex items-center gap-4 text-sm">
                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
                                   {getStatusIcon(report.status)}
                                   {report.status === 'PUBLISHED' ? 'منشور' : 
                                    report.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
-                                </span>
+                            </span>
                                 <span className="flex items-center gap-1 text-gray-500">
-                                  <Eye className="w-4 h-4" />
-                                  {report.viewCount}
-                                </span>
+                              <Eye className="w-4 h-4" />
+                              {report.viewCount}
+                            </span>
                                 <span className="flex items-center gap-1 text-gray-500">
-                                  <MessageCircle className="w-4 h-4" />
-                                  {report._count.comments}
-                                </span>
-                              </div>
-                            </div>
-                            <Link
-                              href={`/reports/${report.id}`}
-                              className="text-mauritania-green hover:text-mauritania-green-dark text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-all duration-300"
-                            >
-                              عرض
-                            </Link>
+                              <MessageCircle className="w-4 h-4" />
+                              {report._count.comments}
+                            </span>
                           </div>
                         </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                        <Link
+                          href={`/reports/${report.id}`}
+                              className="text-mauritania-green hover:text-mauritania-green-dark text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-all duration-300"
+                        >
+                          عرض
+                        </Link>
+                          </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
+            </div>
             )}
 
             {/* Trending Topics */}
@@ -737,44 +757,44 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {user?.role === 'REPORTER' ? (
                 // Reporter Actions
-                <Link
+              <Link
                   href="/articles/create"
                   className="group p-6 bg-gradient-to-br from-mauritania-gold/10 to-mauritania-red/20 rounded-2xl border border-mauritania-gold/30 hover:border-mauritania-gold/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                >
+              >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Plus className="h-6 w-6 text-white" />
                     </div>
-                    <div>
+                <div>
                       <h3 className="font-bold text-gray-900 group-hover:text-mauritania-gold transition-colors text-lg">
                         إنشاء مقال جديد
-                      </h3>
+                  </h3>
                       <p className="text-gray-600">
                         كتابة مقال جديد للمراجعة
-                      </p>
+                  </p>
                     </div>
-                  </div>
-                </Link>
+                </div>
+              </Link>
               ) : (
                 // Regular User Actions
-                <Link
+              <Link
                   href="/reports/create"
                   className="group p-6 bg-gradient-to-br from-mauritania-green/10 to-mauritania-green/20 rounded-2xl border border-mauritania-green/30 hover:border-mauritania-green/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-                >
+              >
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green to-mauritania-green-dark rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                       <Plus className="h-6 w-6 text-white" />
                     </div>
-                    <div>
+                <div>
                       <h3 className="font-bold text-gray-900 group-hover:text-mauritania-green transition-colors text-lg">
                         إرسال بلاغ
-                      </h3>
+                  </h3>
                       <p className="text-gray-600">
                         مشاركة خبر أو تقرير جديد
-                      </p>
+                  </p>
                     </div>
-                  </div>
-                </Link>
+                </div>
+              </Link>
               )}
 
               <Link
@@ -785,13 +805,13 @@ const Dashboard: React.FC = () => {
                   <div className="w-12 h-12 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                     <TrendingUp className="h-6 w-6 text-white" />
                   </div>
-                  <div>
+                <div>
                     <h3 className="font-bold text-gray-900 group-hover:text-mauritania-gold transition-colors text-lg">
-                      عرض الترندات
-                    </h3>
+                    عرض الترندات
+                  </h3>
                     <p className="text-gray-600">
                       استكشاف المواضيع الرائجة
-                    </p>
+                  </p>
                   </div>
                 </div>
               </Link>
