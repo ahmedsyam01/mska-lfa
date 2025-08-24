@@ -69,12 +69,15 @@ interface DashboardData {
   // Common: trending topics
   featuredNews: Array<{
     id: string;
-    topic?: string;
+    topic: string;
     topicAr?: string;
     description?: string;
-    descriptionAr?: string;
     count: number;
     category?: string;
+    isActive: boolean;
+    weekOf: string;
+    createdAt: string;
+    updatedAt: string;
   }>;
 }
 
@@ -666,16 +669,16 @@ const Dashboard: React.FC = () => {
                           </span>
                           <div>
                             <h3 className="font-semibold text-gray-900">
-                              {topic.topic || topic.topicAr || 'موضوع رائج'}
+                              {topic.topicAr || topic.topic || 'موضوع رائج'}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              {topic.description || topic.descriptionAr || 'موضوع شائع'}
+                              {topic.description || 'موضوع شائع'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <BarChart3 className="w-4 h-4" />
-                          <span className="font-semibold">{topic.count || 0}</span>
+                          <span className="font-semibold">{topic.count}</span>
                         </div>
                       </div>
                     ))}
