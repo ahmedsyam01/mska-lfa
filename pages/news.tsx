@@ -46,9 +46,16 @@ const NewsPage: React.FC = () => {
         page: currentPage
       });
       const data = response.data;
+      console.log('API Response:', data);
+      console.log('Articles:', data.articles?.length || 0);
+      console.log('Total:', data.total);
+      console.log('Current Page:', currentPage);
+      
       setArticles(data.articles || []);
       setTotalArticles(data.total || 0);
-      setTotalPages(Math.ceil((data.total || 0) / articlesPerPage));
+      const calculatedPages = Math.ceil((data.total || 0) / articlesPerPage);
+      setTotalPages(calculatedPages);
+      console.log('Calculated Total Pages:', calculatedPages);
       console.log('Articles fetched:', data.articles?.length || 0, 'Total:', data.total);
     } catch (error) {
       console.error('Error fetching articles:', error);
@@ -261,6 +268,16 @@ const NewsPage: React.FC = () => {
             </button>
           </div>
         )}
+
+        {/* Debug Info - Remove this after testing */}
+        <div className="mt-4 p-4 bg-gray-100 rounded text-sm text-gray-600">
+          <p>Debug Info:</p>
+          <p>Total Articles: {totalArticles}</p>
+          <p>Total Pages: {totalPages}</p>
+          <p>Current Page: {currentPage}</p>
+          <p>Articles Per Page: {articlesPerPage}</p>
+          <p>Should Show Pagination: {totalPages > 1 ? 'Yes' : 'No'}</p>
+        </div>
 
         {/* Trending Topics Sidebar */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-6">
