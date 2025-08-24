@@ -9,7 +9,11 @@ interface User {
   firstName: string;
   lastName: string;
   role: string;
+  phoneNumber?: string;
+  location?: string;
+  bio?: string;
   avatar?: string;
+  createdAt?: string;
 }
 
 interface AuthContextType {
