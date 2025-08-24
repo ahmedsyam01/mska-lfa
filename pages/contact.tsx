@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Layout from '../components/Layout/Layout';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { Mail, Phone, MapPin, Clock, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, Clock, Send, MessageCircle, Users, Globe } from 'lucide-react';
 
 const ContactPage: React.FC = () => {
   const { t } = useTranslation('common');
@@ -63,22 +63,32 @@ const ContactPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="min-h-screen bg-gray-50 py-8" dir="rtl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen py-12" dir="rtl">
+        <div className="max-w-7xl mx-auto px-6">
           {/* Page Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">اتصل بنا</h1>
-            <p className="text-xl text-gray-600">نحن هنا للإجابة على أسئلتك واستقبال اقتراحاتك</p>
+          <div className="text-center mb-16">
+            <div className="flex items-center justify-center mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-3xl flex items-center justify-center shadow-lg">
+                <MessageCircle className="w-10 h-10 text-white" />
+              </div>
+            </div>
+            <h1 className="text-5xl font-bold text-gradient mb-6">اتصل بنا</h1>
+            <p className="text-xl text-mauritania-gold-dark">نحن هنا للإجابة على أسئلتك واستقبال اقتراحاتك</p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Form */}
-            <div className="bg-white rounded-lg shadow-md p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">أرسل رسالة</h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="modern-card p-10">
+              <div className="flex items-center mb-8">
+                <div className="w-12 h-12 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark rounded-xl flex items-center justify-center mr-4">
+                  <Send className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-3xl font-bold text-gradient">أرسل رسالة</h2>
+              </div>
+              <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="name" className="block text-sm font-bold text-mauritania-green-dark mb-3">
                       الاسم الكامل
                     </label>
                     <input
@@ -88,12 +98,12 @@ const ContactPage: React.FC = () => {
                       value={formData.name}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-6 py-4 border-2 border-mauritania-green/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 bg-white/50 backdrop-blur-sm text-lg"
                       placeholder="أدخل اسمك الكامل"
                     />
                   </div>
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                    <label htmlFor="email" className="block text-sm font-bold text-mauritania-green-dark mb-3">
                       البريد الإلكتروني
                     </label>
                     <input
@@ -103,13 +113,13 @@ const ContactPage: React.FC = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full px-6 py-4 border-2 border-mauritania-green/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 bg-white/50 backdrop-blur-sm text-lg"
                       placeholder="أدخل بريدك الإلكتروني"
                     />
                   </div>
                 </div>
                 <div>
-                  <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="subject" className="block text-sm font-bold text-mauritania-green-dark mb-3">
                     الموضوع
                   </label>
                   <input
@@ -119,12 +129,12 @@ const ContactPage: React.FC = () => {
                     value={formData.subject}
                     onChange={handleInputChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-mauritania-green/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 bg-white/50 backdrop-blur-sm text-lg"
                     placeholder="أدخل موضوع الرسالة"
                   />
                 </div>
                 <div>
-                  <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="message" className="block text-sm font-bold text-mauritania-green-dark mb-3">
                     الرسالة
                   </label>
                   <textarea
@@ -134,34 +144,39 @@ const ContactPage: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     rows={6}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-6 py-4 border-2 border-mauritania-green/30 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 bg-white/50 backdrop-blur-sm text-lg resize-none"
                     placeholder="اكتب رسالتك هنا..."
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-3 px-6 rounded-md font-medium hover:bg-blue-700 transition-colors duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white py-4 px-8 rounded-2xl font-bold text-lg hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                 >
-                  <Send className="w-5 h-5" />
+                  <Send className="w-6 h-6" />
                   إرسال الرسالة
                 </button>
               </form>
             </div>
 
             {/* Contact Information */}
-            <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-md p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">معلومات الاتصال</h2>
-                <div className="space-y-6">
+            <div className="space-y-8">
+              <div className="modern-card p-10">
+                <div className="flex items-center mb-8">
+                  <div className="w-12 h-12 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center mr-4">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-gradient">معلومات الاتصال</h2>
+                </div>
+                <div className="space-y-8">
                   {contactInfo.map((info, index) => (
-                    <div key={index} className="flex items-start gap-4">
-                      <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                    <div key={index} className="flex items-start gap-6">
+                      <div className="flex-shrink-0 w-14 h-14 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-2xl flex items-center justify-center text-white shadow-lg">
                         {info.icon}
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900">{info.title}</h3>
-                        <p className="text-blue-600 font-medium">{info.value}</p>
-                        <p className="text-gray-600 text-sm">{info.description}</p>
+                        <h3 className="text-xl font-bold text-mauritania-green-dark mb-2">{info.title}</h3>
+                        <p className="text-mauritania-gold-dark font-semibold text-lg mb-1">{info.value}</p>
+                        <p className="text-gray-600">{info.description}</p>
                       </div>
                     </div>
                   ))}
@@ -169,44 +184,49 @@ const ContactPage: React.FC = () => {
               </div>
 
               {/* Social Media */}
-              <div className="bg-white rounded-lg shadow-md p-8">
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">تابعنا</h2>
+              <div className="modern-card p-10">
+                <div className="flex items-center mb-8">
+                  <div className="w-12 h-12 bg-gradient-to-r from-mauritania-red to-mauritania-red-dark rounded-xl flex items-center justify-center mr-4">
+                    <Globe className="w-6 h-6 text-white" />
+                  </div>
+                  <h2 className="text-3xl font-bold text-gradient">تابعنا</h2>
+                </div>
                 <div className="grid grid-cols-2 gap-4">
                   <a
                     href="#"
-                    className="flex items-center gap-3 p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200"
+                    className="flex items-center gap-4 p-6 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                      <span className="text-lg font-bold">f</span>
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <span className="text-xl font-bold">f</span>
                     </div>
-                    <span>فيسبوك</span>
+                    <span className="font-semibold">فيسبوك</span>
                   </a>
                   <a
                     href="#"
-                    className="flex items-center gap-3 p-4 bg-blue-400 text-white rounded-lg hover:bg-blue-500 transition-colors duration-200"
+                    className="flex items-center gap-4 p-6 bg-gradient-to-r from-mauritania-gold to-mauritania-gold-dark text-white rounded-2xl hover:from-mauritania-gold-dark hover:to-mauritania-gold transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                      <span className="text-lg font-bold">ت</span>
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <span className="text-xl font-bold">ت</span>
                     </div>
-                    <span>تويتر</span>
+                    <span className="font-semibold">تويتر</span>
                   </a>
                   <a
                     href="#"
-                    className="flex items-center gap-3 p-4 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200"
+                    className="flex items-center gap-4 p-6 bg-gradient-to-r from-mauritania-red to-mauritania-red-dark text-white rounded-2xl hover:from-mauritania-red-dark hover:to-mauritania-red transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                      <span className="text-lg font-bold">ي</span>
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <span className="text-xl font-bold">ي</span>
                     </div>
-                    <span>يوتيوب</span>
+                    <span className="font-semibold">يوتيوب</span>
                   </a>
                   <a
                     href="#"
-                    className="flex items-center gap-3 p-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200"
+                    className="flex items-center gap-4 p-6 bg-gradient-to-r from-mauritania-green to-mauritania-gold text-white rounded-2xl hover:from-mauritania-gold hover:to-mauritania-green transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
                   >
-                    <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-                      <span className="text-lg font-bold">و</span>
+                    <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                      <span className="text-xl font-bold">و</span>
                     </div>
-                    <span>واتساب</span>
+                    <span className="font-semibold">واتساب</span>
                   </a>
                 </div>
               </div>

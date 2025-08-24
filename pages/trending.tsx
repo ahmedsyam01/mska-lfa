@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetStaticProps } from 'next';
 import Layout from '../components/Layout/Layout';
 import NewsCard from '../components/common/NewsCard';
-import { TrendingUp, Flame, Hash, Eye } from 'lucide-react';
+import { TrendingUp, Flame, Hash, Eye, BarChart3, Zap } from 'lucide-react';
 import { articlesAPI } from '@/utils/api';
 
 interface Article {
@@ -66,19 +66,19 @@ const TrendingPage: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+        <div className="max-w-7xl mx-auto px-6 py-12" dir="rtl">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="flex gap-4 mb-8 justify-end">
-              <div className="h-10 bg-gray-200 rounded w-24"></div>
-              <div className="h-10 bg-gray-200 rounded w-24"></div>
+            <div className="h-12 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded-2xl w-1/3 mb-8"></div>
+            <div className="flex gap-6 mb-12 justify-end">
+              <div className="h-12 bg-gradient-to-r from-mauritania-gold/20 to-mauritania-red/20 rounded-xl w-32"></div>
+              <div className="h-12 bg-gradient-to-r from-mauritania-red/20 to-mauritania-green/20 rounded-xl w-32"></div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-lg shadow-md p-4">
-                  <div className="h-48 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                <div key={i} className="modern-card p-6 h-64">
+                  <div className="h-48 bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 rounded-xl mb-4"></div>
+                  <div className="h-4 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded w-3/4 mb-2"></div>
+                  <div className="h-4 bg-gradient-to-r from-mauritania-gold/20 to-mauritania-red/20 rounded w-1/2"></div>
                 </div>
               ))}
             </div>
@@ -90,48 +90,52 @@ const TrendingPage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+      <div className="max-w-7xl mx-auto px-6 py-12" dir="rtl">
         {/* Page Header */}
-        <div className="mb-8">
-          <div className="flex items-center mb-4 justify-start space-x-start">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900">
-              الرائج
-            </h1>
-            <TrendingUp className="h-8 w-8 text-primary-600 ml-3" />
+        <div className="mb-12">
+          <div className="flex items-center mb-6 justify-start space-x-start">
+            <div className="w-16 h-16 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg mr-4">
+              <TrendingUp className="h-8 w-8 text-white" />
+            </div>
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-gradient">
+                الرائج
+              </h1>
+              <p className="text-xl text-mauritania-gold-dark text-right mt-2">
+                اكتشف ما هو رائج في موريتانيا الآن
+              </p>
+            </div>
           </div>
-          <p className="text-lg text-gray-600 text-right">
-            اكتشف ما هو رائج في موريتانيا الآن
-          </p>
         </div>
 
         {/* Tabs */}
-        <div className="mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="flex gap-8 justify-start">
+        <div className="mb-12">
+          <div className="bg-white/50 backdrop-blur-sm rounded-2xl p-2 border border-white/20">
+            <nav className="flex gap-2 justify-start">
               <button
                 onClick={() => setActiveTab('topics')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-6 rounded-xl font-semibold text-sm transition-all duration-300 ${
                   activeTab === 'topics'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-mauritania-gold to-mauritania-red text-white shadow-lg'
+                    : 'text-mauritania-green-dark hover:bg-mauritania-green/10'
                 }`}
               >
                 <div className="flex items-center gap-2 space-x-reverse">
                   <span>المواضيع الرائجة</span>
-                  <Hash className="h-4 w-4" />
+                  <Hash className="h-5 w-5" />
                 </div>
               </button>
               <button
                 onClick={() => setActiveTab('articles')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                className={`py-4 px-6 rounded-xl font-semibold text-sm transition-all duration-300 ${
                   activeTab === 'articles'
-                    ? 'border-primary-500 text-primary-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                    ? 'bg-gradient-to-r from-mauritania-gold to-mauritania-red text-white shadow-lg'
+                    : 'text-mauritania-green-dark hover:bg-mauritania-green/10'
                 }`}
               >
                 <div className="flex items-center gap-2 space-x-reverse">
                   <span>المقالات الرائجة</span>
-                  <Flame className="h-4 w-4" />
+                  <Flame className="h-5 w-5" />
                 </div>
               </button>
             </nav>
@@ -141,14 +145,17 @@ const TrendingPage: React.FC = () => {
         {/* Content */}
         {activeTab === 'articles' ? (
           <div>
-            <div className="mb-6">
-              <p className="text-gray-600 text-right">
-                {articles.length} مقال رائج
-              </p>
+            <div className="mb-8">
+              <div className="inline-flex items-center space-x-2 space-x-reverse bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 px-6 py-3 rounded-full border border-mauritania-green/20">
+                <Zap className="w-5 h-5 text-mauritania-green" />
+                <p className="text-mauritania-green-dark font-semibold">
+                  {articles.length} مقال رائج
+                </p>
+              </div>
             </div>
             
             {articles.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {articles.map(article => (
                   <NewsCard
                     key={article.id}
@@ -158,12 +165,14 @@ const TrendingPage: React.FC = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12">
-                <Flame className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-xl font-medium text-gray-900 mb-2">
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Flame className="h-12 w-12 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-mauritania-green-dark mb-3">
                   لا توجد مقالات رائجة
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-mauritania-gold-dark text-lg">
                   تحقق مرة أخرى لاحقًا للمحتوى الرائج
                 </p>
               </div>
@@ -171,32 +180,44 @@ const TrendingPage: React.FC = () => {
           </div>
         ) : (
           <div>
-            <div className="mb-6">
-              <p className="text-gray-600 text-right">
-                {topics.length} موضوع رائج
-              </p>
+            <div className="mb-8">
+              <div className="inline-flex items-center space-x-2 space-x-reverse bg-gradient-to-r from-mauritania-gold/10 to-mauritania-red/10 px-6 py-3 rounded-full border border-mauritania-gold/20">
+                <Hash className="w-5 h-5 text-mauritania-gold" />
+                <p className="text-mauritania-gold-dark font-semibold">
+                  {topics.length} موضوع رائج
+                </p>
+              </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {topics.map((topic, index) => (
                 <div
                   key={topic.id}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="modern-card p-6 hover:scale-[1.02] transition-all duration-300 cursor-pointer group"
                   dir="rtl"
                 >
-                  <div className="flex items-center justify-between mb-2 flex-row-reverse">
-                    <span className="text-xs font-medium text-primary-600 bg-primary-50 px-2 py-1 rounded-full">
+                  <div className="flex items-center justify-between mb-4 flex-row-reverse">
+                    <span className={`text-sm font-bold text-white px-3 py-1.5 rounded-full ${
+                      index < 3 
+                        ? 'bg-gradient-to-r from-mauritania-gold to-mauritania-red' 
+                        : 'bg-gradient-to-r from-mauritania-green to-mauritania-green-dark'
+                    } shadow-lg`}>
                       #{index + 1}
                     </span>
                     <div className="flex items-center gap-2 space-x-reverse">
-                      <span className="font-medium text-gray-900">#{topic.name}</span>
-                      <Hash className="h-4 w-4 text-primary-600" />
+                      <span className="font-bold text-lg text-mauritania-green-dark group-hover:text-mauritania-green transition-colors duration-300">#{topic.name}</span>
+                      <Hash className="h-5 w-5 text-mauritania-gold" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 text-sm text-gray-600 justify-end space-x-reverse">
-                    <span>{topic.count.toLocaleString()} مشاهدة</span>
+                  <div className="flex items-center gap-2 text-sm text-mauritania-gold-dark justify-end space-x-reverse">
+                    <span className="font-semibold">{topic.count.toLocaleString()} مشاهدة</span>
                     <Eye className="h-4 w-4" />
                   </div>
+                  {topic.trending && (
+                    <div className="absolute top-3 left-3">
+                      <div className="w-3 h-3 bg-mauritania-red rounded-full animate-pulse"></div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -204,28 +225,33 @@ const TrendingPage: React.FC = () => {
         )}
 
         {/* Trending Stats */}
-        <div className="mt-12 bg-gradient-to-r from-primary-50 to-primary-100 rounded-lg p-6" dir="rtl">
-          <h2 className="text-xl font-bold text-gray-900 mb-4 text-right">
-            إحصائيات الرائج
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-16 modern-card p-8" dir="rtl">
+          <div className="flex items-center mb-8 flex-row-start">
+            <div className="w-12 h-12 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-xl flex items-center justify-center mr-4">
+              <BarChart3 className="h-6 w-6 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold text-gradient">
+              إحصائيات الرائج
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600 mb-2">
+              <div className="text-4xl font-bold text-gradient mb-3">
                 {articles.reduce((sum, article) => sum + article.viewCount, 0).toLocaleString()}
               </div>
-              <div className="text-gray-600">إجمالي المشاهدات</div>
+              <div className="text-mauritania-gold-dark font-semibold">إجمالي المشاهدات</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600 mb-2">
+              <div className="text-4xl font-bold text-gradient mb-3">
                 {topics.reduce((sum, topic) => sum + topic.count, 0).toLocaleString()}
               </div>
-              <div className="text-gray-600">إشارات المواضيع</div>
+              <div className="text-mauritania-gold-dark font-semibold">إشارات المواضيع</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-primary-600 mb-2">
+              <div className="text-4xl font-bold text-gradient mb-3">
                 {articles.reduce((sum, article) => sum + article._count.comments, 0).toLocaleString()}
               </div>
-              <div className="text-gray-600">إجمالي التعليقات</div>
+              <div className="text-mauritania-gold-dark font-semibold">إجمالي التعليقات</div>
             </div>
           </div>
         </div>
