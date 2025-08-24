@@ -32,6 +32,18 @@ module.exports = {
           700: '#b91c1c',
           800: '#991b1b',
           900: '#7f1d1d',
+        },
+        // Mauritania Flag Colors
+        mauritania: {
+          green: '#00A651',
+          gold: '#FFD100',
+          red: '#CE1126',
+          'green-light': '#00C853',
+          'green-dark': '#008E3A',
+          'gold-light': '#FFE082',
+          'gold-dark': '#FFB300',
+          'red-light': '#E53935',
+          'red-dark': '#B71C1C',
         }
       },
       fontFamily: {
@@ -44,6 +56,8 @@ module.exports = {
         'slide-up': 'slideUp 0.5s ease-out',
         'bounce-slow': 'bounce 2s infinite',
         'pulse-slow': 'pulse 3s infinite',
+        'float': 'float 6s ease-in-out infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
       },
       keyframes: {
         fadeIn: {
@@ -54,7 +68,23 @@ module.exports = {
           '0%': { transform: 'translateY(20px)', opacity: '0' },
           '100%': { transform: 'translateY(0)', opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-20px)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px #00A651, 0 0 10px #00A651, 0 0 15px #00A651' },
+          '100%': { boxShadow: '0 0 10px #00A651, 0 0 20px #00A651, 0 0 30px #00A651' },
+        },
       },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'mauritania-pattern': 'linear-gradient(45deg, #00A651 25%, transparent 25%), linear-gradient(-45deg, #00A651 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #00A651 75%), linear-gradient(-45deg, transparent 75%, #00A651 75%)',
+      },
+      backdropBlur: {
+        xs: '2px',
+      }
     },
   },
   plugins: [],

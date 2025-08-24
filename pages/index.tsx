@@ -332,11 +332,11 @@ const HomePage: React.FC = () => {
 
   const getHeaderColor = (color: string) => {
     switch (color) {
-      case 'blue': return '#027ac6';
-      case 'orange': return '#bd5900';
-      case 'red': return '#c50400';
-      case 'green': return '#008000';
-      default: return '#027ac6';
+      case 'blue': return 'from-mauritania-green to-mauritania-green-dark';
+      case 'orange': return 'from-mauritania-gold to-mauritania-gold-dark';
+      case 'red': return 'from-mauritania-red to-mauritania-red-dark';
+      case 'green': return 'from-mauritania-green to-mauritania-green-dark';
+      default: return 'from-mauritania-green to-mauritania-green-dark';
     }
   };
 
@@ -359,11 +359,17 @@ const HomePage: React.FC = () => {
   if (loading) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#d4edec] flex items-center justify-center" dir="rtl">
+        <div className="min-h-screen bg-gradient-to-br from-mauritania-green-light/10 via-white to-mauritania-gold-light/10 flex items-center justify-center" dir="rtl">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <div className="text-lg text-gray-600">جاري تحميل الأخبار...</div>
-            <div className="text-sm text-gray-500 mt-2">يتم جلب أحدث الأخبار من جميع المصادر</div>
+            <div className="relative">
+              <div className="w-32 h-32 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full flex items-center justify-center animate-pulse">
+                <div className="w-24 h-24 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-16 h-16 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full animate-spin"></div>
+                </div>
+              </div>
+            </div>
+            <div className="text-xl text-mauritania-green font-bold mt-6 mb-2">جاري تحميل الأخبار...</div>
+            <div className="text-mauritania-gold-dark">يتم جلب أحدث الأخبار من جميع المصادر</div>
           </div>
         </div>
       </Layout>
@@ -373,14 +379,16 @@ const HomePage: React.FC = () => {
   if (error) {
     return (
       <Layout>
-        <div className="min-h-screen bg-[#d4edec] flex items-center justify-center" dir="rtl">
+        <div className="min-h-screen bg-gradient-to-br from-mauritania-green-light/10 via-white to-mauritania-gold-light/10 flex items-center justify-center" dir="rtl">
           <div className="text-center">
-            <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <div className="text-xl text-gray-800 mb-2">خطأ في تحميل الأخبار</div>
-            <div className="text-gray-600 mb-4">{error}</div>
+            <div className="w-24 h-24 bg-gradient-to-r from-mauritania-red to-mauritania-red-dark rounded-full flex items-center justify-center mx-auto mb-6 animate-bounce">
+              <span className="text-white text-4xl">⚠️</span>
+            </div>
+            <div className="text-2xl text-mauritania-red font-bold mb-4">خطأ في تحميل الأخبار</div>
+            <div className="text-gray-600 mb-6">{error}</div>
             <button 
               onClick={() => window.location.reload()} 
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white px-8 py-3 rounded-full font-bold hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               إعادة المحاولة
             </button>
@@ -392,25 +400,22 @@ const HomePage: React.FC = () => {
 
   return (
     <Layout>
-      <style jsx>{`
-        @keyframes pulse {
-          0% { opacity: 1; }
-          50% { opacity: 0.5; }
-          100% { opacity: 1; }
-        }
-      `}</style>
-      <div className="min-h-screen bg-[#d4edec]" dir="rtl">
-        {/* Status Bar */}
+      <div className="min-h-screen bg-gradient-to-br from-mauritania-green-light/5 via-white to-mauritania-gold-light/5" dir="rtl">
+        {/* Modern Status Bar */}
         {lastUpdated && (
-          <div className="bg-white border-b border-gray-200 py-2 px-4">
-            <div className="flex justify-between items-center text-sm text-gray-600">
-              <div>
-                آخر تحديث: {formatLastUpdated(lastUpdated)}
+          <div className="bg-white/80 backdrop-blur-md border-b border-mauritania-green/20 py-4 px-6 shadow-sm">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-center gap-4 text-sm">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-mauritania-green rounded-full animate-pulse"></div>
+                  <span className="text-mauritania-green font-semibold">آخر تحديث: {formatLastUpdated(lastUpdated)}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 bg-mauritania-gold rounded-full"></div>
+                  <span className="text-mauritania-gold-dark font-semibold">إجمالي المقالات: {articles.length} مقالة</span>
+                </div>
               </div>
-              <div>
-                إجمالي المقالات: {articles.length} مقالة
-              </div>
-              <div className="flex gap-4">
+              <div className="flex flex-wrap gap-2">
                 {Object.entries(
                   articles.reduce((acc: any, article) => {
                     const source = article.sourceName || 'Unknown';
@@ -422,7 +427,7 @@ const HomePage: React.FC = () => {
                 .sort(([,a], [,b]) => (b as number) - (a as number))
                 .slice(0, 5)
                 .map(([source, count]) => (
-                  <span key={source} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">
+                  <span key={source} className="bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 text-mauritania-green-dark px-3 py-1 rounded-full text-xs font-medium border border-mauritania-green/30">
                     {source}: {count as number}
                   </span>
                 ))}
@@ -431,182 +436,145 @@ const HomePage: React.FC = () => {
           </div>
         )}
 
-        {/* Top Promotional Section - 2 Rows */}
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-4">
-            {/* Row 1: Logo (25%) + Promotion Image (75%) */}
-            <div className="grid grid-cols-4 gap-6 mb-6">
-              {/* Column 1: Logo (25%) */}
-              <div className="col-span-1 bg-white p-6 rounded-lg shadow-lg">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-2">موريتانيا الآن</div>
-                  <div className="text-sm text-gray-600">WWW.RIMNOW.COM</div>
-                  <div className="w-16 h-16 bg-green-500 border border-white mx-auto mt-4"></div>
-                </div>
-          </div>
-
-              {/* Column 2: Promotion Image (75%) */}
-              <div className="col-span-3">
-                <div className="w-full h-48 bg-gradient-to-l from-blue-600 to-blue-800 rounded-lg shadow-lg flex items-center justify-center">
-                  <div className="text-white text-center">
-                    <div className="text-2xl font-bold mb-2">Bankily Promotion</div>
-                    <div className="text-sm">Promotional Image Placeholder</div>
+        {/* Hero Section with Logo and Promotions */}
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-6">
+            {/* Row 1: Logo + Main Promotion */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+              {/* Logo Section */}
+              <div className="lg:col-span-1">
+                <div className="modern-card p-8 text-center h-full flex flex-col justify-center">
+                  <div className="mb-6">
+                    <div className="text-3xl font-bold text-gradient mb-3">موريتانيا الآن</div>
+                    <div className="text-sm text-mauritania-gold-dark font-medium">WWW.RIMNOW.COM</div>
+                  </div>
+                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg animate-float">
+                    <div className="text-white text-2xl font-bold">ر</div>
                   </div>
                 </div>
               </div>
-          </div>
 
-            {/* Row 2: 2 Promotion Images (50% each) */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Column 1: Environmental Study Promotion Image (50%) */}
-              <div className="w-full h-32 bg-white rounded-lg shadow-lg flex items-center justify-center border-2 border-gray-200">
-                <div className="text-gray-600 text-center">
-                  <div className="text-lg font-bold mb-1">Environmental Study</div>
-                  <div className="text-sm">Promotional Image Placeholder</div>
-                </div>
-              </div>
-
-              {/* Column 2: Chinguitel Promotion Image (50%) */}
-              <div className="w-full h-32 bg-blue-600 rounded-lg shadow-lg flex items-center justify-center">
-                <div className="text-white text-center">
-                  <div className="text-lg font-bold mb-1">Chinguitel Promotion</div>
-                  <div className="text-sm">Promotional Image Placeholder</div>
-        </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Main Content - News Sections (2 Columns) */}
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {newsSections.map((section) => (
-                <div key={section.id} id="rss_block" className="bg-white overflow-hidden w-full h-auto float-right border border-dotted border-gray-300 rounded-lg shadow-lg" style={{
-                  borderRadius: '10px',
-                  boxShadow: '0 1px 4px rgba(0,0,0,.3),0 0 40px rgba(0,0,0,.1) inset'
-                }}>
-                  <div className={section.color}>
-                    <div>
-                      <div>
-                        <div>
-                          <h3 style={{
-                            textAlign: 'right',
-                            border: 'solid 1px #eee',
-                            backgroundColor: '#f4f4f4',
-                            margin: 0,
-                            height: '35px',
-                            overflow: 'hidden',
-                            marginTop: '1px'
-                          }}>
-                            <a href={section.sourceUrl} target="_blank" className="url_site" style={{
-                              padding: '3px 10px',
-                              background: getHeaderColor(section.color),
-                              border: 'solid 1px #f4f4f4',
-                              color: '#fff',
-                              fontWeight: '400',
-                              fontSize: '12px',
-                              textDecoration: 'none',
-                              lineHeight: '30px',
-                              marginRight: '10px',
-                              marginTop: '2px',
-                              display: 'inline-block'
-                            }}>
-                              {section.nameAr} ({section.articles.length})
-                            </a>
-                        </h3>
-                          
-                          <div className="feed">
-                            <ul className="item_rss" style={{
-                              padding: 0,
-                              margin: 0
-                            }}>
-                              {section.articles.length > 0 ? (
-                                section.articles.map((article, index) => {
-                                  const isNew = new Date(article.createdAt).getTime() > Date.now() - (24 * 60 * 60 * 1000); // Last 24 hours
-                                  return (
-                                    <li key={article.id} style={{
-                                      listStyle: 'none',
-                                      borderBottom: '1px solid #ebebeb',
-                                      padding: '4px',
-                                      height: '24px',
-                                      overflow: 'hidden',
-                                      position: 'relative'
-                                    }}>
-                                      {isNew && (
-                                        <span style={{
-                                          position: 'absolute',
-                                          left: '4px',
-                                          top: '50%',
-                                          transform: 'translateY(-50%)',
-                                          width: '6px',
-                                          height: '6px',
-                                          backgroundColor: '#ff4444',
-                                          borderRadius: '50%',
-                                          animation: 'pulse 2s infinite'
-                                        }}></span>
-                                      )}
-                                      <a 
-                                        href={`/articles/${article.id}`}
-                                        style={{
-                                          textDecoration: 'none',
-                                          fontSize: '11px',
-                                          textAlign: 'right',
-                                          color: article.isBreaking ? 'red' : (isNew ? '#027ac6' : '#00437c'),
-                                          display: 'block',
-                                          lineHeight: '22px',
-                                          overflow: 'hidden',
-                                          fontWeight: isNew ? 'bold' : 'normal',
-                                          paddingRight: isNew ? '12px' : '0'
-                                        }}
-                                        title={article.title}
-                                      >
-                                        {article.title}
-                                      </a>
-                                    </li>
-                                  );
-                                })
-                              ) : (
-                                // Show empty state when no articles are available
-                                <li style={{
-                                  listStyle: 'none',
-                                  borderBottom: '1px solid #ebebeb',
-                                  padding: '8px',
-                                  textAlign: 'center',
-                                  color: '#999',
-                                  fontSize: '11px'
-                                }}>
-                                  لا توجد أخبار متاحة حالياً
-                                </li>
-                              )}
-                            </ul>
-                          </div>
-                        </div>
+              {/* Main Promotion */}
+              <div className="lg:col-span-3">
+                <div className="modern-card p-8 h-full bg-gradient-to-r from-mauritania-green via-mauritania-gold to-mauritania-red text-white relative overflow-hidden">
+                  <div className="absolute inset-0 bg-black/10"></div>
+                  <div className="relative z-10 text-center">
+                    <div className="text-4xl font-bold mb-4">Bankily Promotion</div>
+                    <div className="text-lg opacity-90">Promotional Image Placeholder</div>
+                    <div className="mt-6">
+                      <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
+                        اكتشف المزيد
+                      </button>
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
 
-        {/* Bottom Promotional Banner */}
-        <section className="py-8">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="w-full h-24 bg-gradient-to-r from-green-600 to-green-800 rounded-lg shadow-lg flex items-center justify-center">
-              <div className="text-white text-center">
-                <div className="text-xl font-bold mb-1">Bottom Promotion Banner</div>
-                <div className="text-sm">Promotional Image Placeholder</div>
+            {/* Row 2: Two Promotions */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Environmental Study */}
+              <div className="modern-card p-6 h-32 flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-mauritania-green mb-2">Environmental Study</div>
+                  <div className="text-mauritania-gold-dark">Promotional Image Placeholder</div>
+                </div>
+              </div>
+
+              {/* Chinguitel */}
+              <div className="modern-card p-6 h-32 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white flex items-center justify-center">
+                <div className="text-center">
+                  <div className="text-xl font-bold mb-2">Chinguitel Promotion</div>
+                  <div className="opacity-90">Promotional Image Placeholder</div>
+                </div>
               </div>
             </div>
           </div>
         </section>
-        </div>
+
+        {/* Main News Sections */}
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {newsSections.map((section) => (
+                <div key={section.id} className="modern-card overflow-hidden">
+                  {/* Header */}
+                  <div className={`bg-gradient-to-r ${getHeaderColor(section.color)} text-white p-4 rounded-t-2xl`}>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-bold text-lg">
+                        <a 
+                          href={section.sourceUrl} 
+                          target="_blank" 
+                          className="hover:opacity-80 transition-opacity duration-200"
+                        >
+                          {section.nameAr} ({section.articles.length})
+                        </a>
+                      </h3>
+                      <div className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center">
+                        <div className="w-2 h-2 bg-white rounded-full"></div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Articles List */}
+                  <div className="bg-white">
+                    <ul className="divide-y divide-gray-100">
+                      {section.articles.length > 0 ? (
+                        section.articles.map((article, index) => {
+                          const isNew = new Date(article.createdAt).getTime() > Date.now() - (24 * 60 * 60 * 1000);
+                          return (
+                            <li key={article.id} className="article-item group">
+                              {isNew && <div className="status-new"></div>}
+                              <a 
+                                href={`/articles/${article.id}`}
+                                className={`block text-sm leading-relaxed pr-${isNew ? '6' : '0'} group-hover:text-mauritania-green transition-colors duration-200 ${
+                                  article.isBreaking ? 'status-breaking' : 
+                                  isNew ? 'text-mauritania-green font-semibold' : 
+                                  'text-gray-700'
+                                }`}
+                                title={article.title}
+                              >
+                                {article.title}
+                              </a>
+                            </li>
+                          );
+                        })
+                      ) : (
+                        <li className="p-6 text-center text-gray-500">
+                          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <span className="text-2xl">📰</span>
+                          </div>
+                          لا توجد أخبار متاحة حالياً
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Bottom Promotion Banner */}
+        <section className="py-12">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="modern-card p-8 bg-gradient-to-r from-mauritania-green via-mauritania-gold to-mauritania-red text-white text-center relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/10"></div>
+              <div className="relative z-10">
+                <div className="text-3xl font-bold mb-3">Bottom Promotion Banner</div>
+                <div className="text-lg opacity-90">Promotional Image Placeholder</div>
+                <div className="mt-6">
+                  <button className="bg-white/20 backdrop-blur-sm text-white px-8 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
+                    تواصل معنا
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
     </Layout>
   );
 };
-
-
 
 export default HomePage; 
