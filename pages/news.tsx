@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetStaticProps } from 'next';
 import Layout from '../components/Layout/Layout';
 import NewsCard from '../components/common/NewsCard';
-import { Search, Filter, Calendar, TrendingUp } from 'lucide-react';
+import { Search, Filter, Calendar, TrendingUp, ChevronLeft, ChevronRight } from 'lucide-react';
 import { articlesAPI } from '@/utils/api';
 
 interface Article {
@@ -28,17 +28,28 @@ const NewsPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [sortBy, setSortBy] = useState('latest');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalArticles, setTotalArticles] = useState(0);
+  const articlesPerPage = 20;
 
   useEffect(() => {
     fetchArticles();
-  }, []);
+  }, [currentPage, selectedCategory, sortBy]);
 
   const fetchArticles = async () => {
     try {
-      const response = await articlesAPI.getAll({ status: 'PUBLISHED', limit: 50 });
+      setLoading(true);
+      const response = await articlesAPI.getAll({ 
+        status: 'PUBLISHED', 
+        limit: articlesPerPage,
+        page: currentPage
+      });
       const data = response.data;
       setArticles(data.articles || []);
-      console.log('Articles fetched:', data.articles?.length || 0);
+      setTotalArticles(data.total || 0);
+      setTotalPages(Math.ceil((data.total || 0) / articlesPerPage));
+      console.log('Articles fetched:', data.articles?.length || 0, 'Total:', data.total);
     } catch (error) {
       console.error('Error fetching articles:', error);
     } finally {
@@ -61,6 +72,21 @@ const NewsPage: React.FC = () => {
     }
     return 0;
   });
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1); // Reset to first page when category changes
+  };
+
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    setCurrentPage(1); // Reset to first page when sort changes
+  };
 
   const categories = [
     { value: 'all', label: 'الكل' },
@@ -98,6 +124,7 @@ const NewsPage: React.FC = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">الأخبار</h1>
           <p className="text-lg text-gray-600">آخر الأخبار من موريتانيا</p>
         </div>
+
         {/* Search and Filter Bar */}
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <div className="flex flex-col md:flex-row gap-4">
@@ -118,18 +145,15 @@ const NewsPage: React.FC = () => {
               <Filter className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <select
                 value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
+                onChange={(e) => handleCategoryChange(e.target.value)}
                 className="pr-10 pl-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-white text-right"
                 dir="rtl"
               >
-                <option value="all">الكل</option>
-                <option value="POLITICS">سياسة</option>
-                <option value="ECONOMY">اقتصاد</option>
-                <option value="SPORTS">رياضة</option>
-                <option value="CULTURE">ثقافة</option>
-                <option value="TECHNOLOGY">تكنولوجيا</option>
-                <option value="HEALTH">صحة</option>
-                <option value="EDUCATION">تعليم</option>
+                {categories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
               </select>
             </div>
             {/* Sort By */}
@@ -137,7 +161,7 @@ const NewsPage: React.FC = () => {
               <Calendar className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <select
                 value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
+                onChange={(e) => handleSortChange(e.target.value)}
                 className="pr-10 pl-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent appearance-none bg-white text-right"
                 dir="rtl"
               >
@@ -147,13 +171,17 @@ const NewsPage: React.FC = () => {
             </div>
           </div>
         </div>
-        {/* Results Count */}
+
+        {/* Results Count and Pagination Info */}
         <div className="mb-6 text-right">
-          <p className="text-gray-600">{sortedArticles.length} خبر</p>
+          <p className="text-gray-600">
+            عرض {((currentPage - 1) * articlesPerPage) + 1} - {Math.min(currentPage * articlesPerPage, totalArticles)} من {totalArticles} خبر
+          </p>
         </div>
+
         {/* Articles Grid */}
         {sortedArticles.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
             {sortedArticles.map(article => (
               <NewsCard
                 key={article.id}
@@ -170,6 +198,70 @@ const NewsPage: React.FC = () => {
             <p className="text-gray-600">حاول تغيير كلمات البحث أو الفلاتر</p>
           </div>
         )}
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center gap-2 mb-8">
+            {/* Previous Page Button */}
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors duration-200 ${
+                currentPage === 1
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              <ChevronRight className="w-4 h-4" />
+              السابق
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={`px-3 py-2 rounded-md transition-colors duration-200 ${
+                      currentPage === pageNum
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next Page Button */}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md transition-colors duration-200 ${
+                currentPage === totalPages
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 text-white hover:bg-blue-700'
+              }`}
+            >
+              التالي
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
         {/* Trending Topics Sidebar */}
         <div className="mt-12 bg-white rounded-lg shadow-md p-6">
           <div className="flex items-center mb-4 flex-row-start">
