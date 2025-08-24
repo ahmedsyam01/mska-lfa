@@ -93,14 +93,34 @@ const Profile: React.FC = () => {
         location: formData.location
       };
 
-      await api.put('/users/me', updateData);
+      console.log('Sending profile update:', updateData);
+      
+      const response = await api.put('/users/me', updateData);
+      console.log('Profile update response:', response);
+      
       setSuccess(true);
       setIsEditing(false);
       
       // Hide success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (err: any) {
-      setError(err.response?.data?.error || 'حدث خطأ أثناء تحديث الملف الشخصي');
+      console.error('Profile update error:', err);
+      
+      let errorMessage = 'حدث خطأ أثناء تحديث الملف الشخصي';
+      
+      if (err.response?.status === 500) {
+        errorMessage = 'خطأ في الخادم - قد يكون الخدمة قيد إعادة التشغيل. يرجى المحاولة مرة أخرى لاحقاً.';
+      } else if (err.response?.status === 400) {
+        errorMessage = err.response?.data?.error || 'بيانات غير صحيحة';
+      } else if (err.response?.status === 401) {
+        errorMessage = 'انتهت صلاحية الجلسة - يرجى تسجيل الدخول مرة أخرى';
+      } else if (err.response?.status === 404) {
+        errorMessage = 'نقطة النهاية غير موجودة';
+      } else if (err.code === 'NETWORK_ERROR' || err.message?.includes('Network Error')) {
+        errorMessage = 'خطأ في الاتصال بالخادم - تحقق من اتصالك بالإنترنت';
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -186,9 +206,20 @@ const Profile: React.FC = () => {
         {error && (
           <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-red-100 border border-red-200 rounded-2xl flex items-center gap-3">
             <AlertCircle className="w-6 h-6 text-red-600" />
-            <div>
+            <div className="flex-1">
               <h3 className="font-semibold text-red-800">حدث خطأ!</h3>
               <p className="text-red-700">{error}</p>
+              {error.includes('قيد إعادة التشغيل') && (
+                <button
+                  onClick={() => {
+                    setError(null);
+                    setIsEditing(true);
+                  }}
+                  className="mt-2 px-4 py-2 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors text-sm"
+                >
+                  إعادة المحاولة
+                </button>
+              )}
             </div>
           </div>
         )}
