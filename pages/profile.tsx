@@ -4,7 +4,6 @@ import { api } from '../utils/api';
 import { 
   User, 
   Mail, 
-  Phone, 
   MapPin, 
   FileText, 
   Edit, 
@@ -22,7 +21,6 @@ interface ProfileForm {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string;
   location: string;
   bio: string;
 }
@@ -33,7 +31,6 @@ const Profile: React.FC = () => {
     firstName: '',
     lastName: '',
     email: '',
-    phoneNumber: '',
     location: '',
     bio: ''
   });
@@ -48,7 +45,6 @@ const Profile: React.FC = () => {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
-        phoneNumber: user.phoneNumber || '',
         location: user.location || '',
         bio: user.bio || ''
       });
@@ -133,7 +129,6 @@ const Profile: React.FC = () => {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         email: user.email || '',
-        phoneNumber: user.phoneNumber || '',
         location: user.location || '',
         bio: user.bio || ''
       });
@@ -347,49 +342,25 @@ const Profile: React.FC = () => {
                   <p className="text-sm text-gray-500 text-right mt-1">لا يمكن تغيير البريد الإلكتروني</p>
                 </div>
 
-                {/* Phone and Location Row */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                    <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-700 text-right mb-2">
-                      رقم الهاتف
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <Phone className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="tel"
-                        id="phoneNumber"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                        disabled={true}
-                        className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg disabled:bg-gray-50 disabled:cursor-not-allowed"
-                        placeholder="+222 12345678"
-                      />
+                {/* Location */}
+                <div>
+                  <label htmlFor="location" className="block text-sm font-semibold text-gray-700 text-right mb-2">
+                    الموقع
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                      <MapPin className="h-5 w-5 text-gray-400" />
                     </div>
-                    <p className="text-sm text-gray-500 text-right mt-1">لا يمكن تغيير رقم الهاتف</p>
-                  </div>
-                  
-                  <div>
-                    <label htmlFor="location" className="block text-sm font-semibold text-gray-700 text-right mb-2">
-                      الموقع
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                        <MapPin className="h-5 w-5 text-gray-400" />
-                      </div>
-                      <input
-                        type="text"
-                        id="location"
-                        name="location"
-                        value={formData.location}
-                        onChange={handleChange}
-                        disabled={!isEditing}
-                        className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg disabled:bg-gray-50 disabled:cursor-not-allowed"
-                        placeholder="نواكشوط، موريتانيا"
-                      />
-                    </div>
+                    <input
+                      type="text"
+                      id="location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      disabled={!isEditing}
+                      className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg disabled:bg-gray-50 disabled:cursor-not-allowed"
+                      placeholder="نواكشوط، موريتانيا"
+                    />
                   </div>
                 </div>
 
