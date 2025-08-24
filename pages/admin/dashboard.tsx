@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
-import Layout from '../../components/Layout/Layout';
 import AdminRouteGuard from '../../components/AdminRouteGuard';
 import { useAuth } from '../../hooks/useAuth';
 import { adminAPI } from '../../utils/api';
@@ -20,7 +19,11 @@ import {
   XCircle,
   Globe,
   Database,
-  Activity
+  Activity,
+  ArrowRight,
+  Sparkles,
+  Crown,
+  LogOut
 } from 'lucide-react';
 import Cookies from 'js-cookie';
 import CelebritiesAdminPanel from '@/components/CelebritiesAdminPanel';
@@ -340,74 +343,80 @@ const AdminDashboard: React.FC = () => {
 
   if (!isAuthenticated || user?.role !== 'ADMIN') {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <Shield className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              وصول ممنوع
-            </h1>
-            <p className="text-gray-600 mb-8">
-              هذه الصفحة متاحة فقط للمديرين.
-            </p>
-            <button
-              onClick={() => router.push('/dashboard')}
-              className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-            >
-              العودة إلى لوحة التحكم
-            </button>
+      <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5 flex items-center justify-center p-4">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-mauritania-red via-mauritania-gold to-mauritania-green rounded-3xl shadow-2xl mb-6">
+            <Shield className="w-10 h-10 text-white" />
           </div>
+          <h1 className="text-3xl font-bold text-gray-800 mb-4">
+            وصول ممنوع
+          </h1>
+          <p className="text-gray-600 mb-8 text-lg">
+            هذه الصفحة متاحة فقط للمديرين.
+          </p>
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+          >
+            <ArrowRight className="w-5 h-5" />
+            العودة إلى لوحة التحكم
+          </button>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   if (loading) {
     return (
-      <Layout>
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary-600"></div>
+      <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-3xl shadow-2xl mx-auto mb-6 animate-pulse"></div>
+          <div className="w-32 h-8 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded-2xl animate-pulse"></div>
         </div>
-      </Layout>
+      </div>
     );
   }
 
   return (
     <AdminRouteGuard>
-      <Layout title="لوحة الإدارة - ريمنا">
-        <div className="min-h-screen bg-gray-50">
-          {/* Header */}
-          <div className="bg-white shadow-sm border-b">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="flex justify-between items-center py-4">
-                <div className="flex items-center space-x-4">
-                  <Shield className="h-8 w-8 text-blue-600" />
-                  <h1 className="text-2xl font-bold text-gray-900">لوحة الإدارة</h1>
+      <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5">
+        {/* Header */}
+        <div className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
+          <div className="max-w-7xl mx-auto px-6 py-6">
+            <div className="flex justify-between items-center">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg">
+                  <Crown className="h-6 w-6 text-white" />
                 </div>
-                <div className="flex items-center space-x-4">
-                  <span className="text-sm text-gray-600">
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent">
+                    لوحة الإدارة
+                  </h1>
+                  <p className="text-gray-600">
                     مرحباً، {user?.firstName} {user?.lastName}
-                  </span>
-                  <button
-                    onClick={() => {
-                      Cookies.remove('rimna_token');
-                      router.push('/admin/login');
-                    }}
-                    className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
-                  >
-                    تسجيل الخروج
-                  </button>
+                  </p>
                 </div>
               </div>
+              <button
+                onClick={() => {
+                  Cookies.remove('rimna_token');
+                  router.push('/admin/login');
+                }}
+                className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-2xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+              >
+                <LogOut className="w-5 h-5" />
+                تسجيل الخروج
+              </button>
             </div>
           </div>
+        </div>
 
           {/* Main Content */}
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="max-w-7xl mx-auto px-6 py-8">
             {/* Navigation Tabs */}
             <div className="mb-8">
-              <div className="border-b border-gray-200">
-                <nav className="flex gap-8">
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-2">
+                <nav className="flex gap-2">
                   {[
                     { key: 'overview', label: 'نظرة عامة', icon: BarChart3 },
                     { key: 'content', label: 'المحتوى', icon: FileText },
@@ -420,10 +429,10 @@ const AdminDashboard: React.FC = () => {
                       <button
                         key={tab.key}
                         onClick={() => setActiveTab(tab.key as any)}
-                        className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
+                        className={`py-3 px-6 rounded-2xl font-semibold text-sm flex items-center gap-2 transition-all duration-300 ${
                           activeTab === tab.key
-                            ? 'border-primary-500 text-primary-600'
-                            : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                            ? 'bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white shadow-lg'
+                            : 'text-gray-600 hover:text-mauritania-green hover:bg-mauritania-green/10'
                         }`}
                       >
                         <Icon className="h-4 w-4" />
@@ -440,76 +449,84 @@ const AdminDashboard: React.FC = () => {
               <div>
                 {/* Stats Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                  <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <Users className="h-8 w-8 text-blue-600" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-mauritania-blue to-mauritania-blue-dark rounded-2xl flex items-center justify-center shadow-lg">
+                          <Users className="h-6 w-6 text-white" />
+                        </div>
                       </div>
                       <div className="mr-4">
                         <p className="text-sm font-medium text-gray-600">
                           إجمالي المستخدمين
                         </p>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-3xl font-bold text-gray-900">
                           {data?.stats.totalUsers.toLocaleString()}
                         </p>
-                        <p className="text-sm text-green-600">
+                        <p className="text-sm text-green-600 font-semibold">
                           {data?.stats.activeUsers.toLocaleString()} نشط
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <FileText className="h-8 w-8 text-green-600" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green to-mauritania-green-dark rounded-2xl flex items-center justify-center shadow-lg">
+                          <FileText className="h-6 w-6 text-white" />
+                        </div>
                       </div>
                       <div className="mr-4">
                         <p className="text-sm font-medium text-gray-600">
                           إجمالي المقالات
                         </p>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-3xl font-bold text-gray-900">
                           {data?.stats.totalArticles.toLocaleString()}
                         </p>
-                        <p className="text-sm text-orange-600">
+                        <p className="text-sm text-orange-600 font-semibold">
                           {data?.stats.pendingArticles} قيد الانتظار
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <AlertTriangle className="h-8 w-8 text-yellow-600" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg">
+                          <AlertTriangle className="h-6 w-6 text-white" />
+                        </div>
                       </div>
                       <div className="mr-4">
                         <p className="text-sm font-medium text-gray-600">
                           إجمالي البلاغات
                         </p>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-3xl font-bold text-gray-900">
                           {data?.stats.totalReports.toLocaleString()}
                         </p>
-                        <p className="text-sm text-red-600">
+                        <p className="text-sm text-red-600 font-semibold">
                           {data?.stats.pendingReports} قيد الانتظار
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="bg-white rounded-lg shadow-sm p-6">
+                  <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
-                        <Eye className="h-8 w-8 text-purple-600" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-mauritania-purple to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg">
+                          <Eye className="h-6 w-6 text-white" />
+                        </div>
                       </div>
                       <div className="mr-4">
                         <p className="text-sm font-medium text-gray-600">
                           إجمالي المشاهدات
                         </p>
-                        <p className="text-2xl font-semibold text-gray-900">
+                        <p className="text-3xl font-bold text-gray-900">
                           {data?.stats.totalViews.toLocaleString()}
                         </p>
-                        <p className="text-sm text-blue-600">
+                        <p className="text-sm text-blue-600 font-semibold">
                           {data?.stats.totalComments.toLocaleString()} تعليقات
                         </p>
                       </div>
@@ -844,7 +861,11 @@ const AdminDashboard: React.FC = () => {
             )}
           </div>
         </div>
-      </Layout>
+
+        {/* Decorative Elements */}
+        <div className="fixed top-20 left-20 w-32 h-32 bg-gradient-to-br from-mauritania-gold/10 to-mauritania-red/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="fixed bottom-20 right-20 w-40 h-40 bg-gradient-to-br from-mauritania-green/10 to-mauritania-gold/10 rounded-full blur-3xl pointer-events-none"></div>
+      </div>
     </AdminRouteGuard>
   );
 };
