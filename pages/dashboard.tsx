@@ -34,10 +34,22 @@ interface DashboardData {
     totalReports: number;
     approvedReports: number;
     pendingReports: number;
+    totalArticles?: number;
+    pendingArticles?: number;
     totalViews: number;
     totalComments: number;
   };
   recentReports: Array<{
+    id: string;
+    title: string;
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    createdAt: string;
+    viewCount: number;
+    _count: {
+      comments: number;
+    };
+  }>;
+  recentArticles?: Array<{
     id: string;
     title: string;
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -68,17 +80,33 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsResponse, reportsResponse, trendingResponse] = await Promise.all([
-        api.get('/users/stats'),
-        api.get('/reports?limit=5'),
-        api.get('/trending?limit=5')
-      ]);
+      if (user?.role === 'REPORTER') {
+        // For reporters, fetch articles instead of reports
+        const [statsResponse, articlesResponse, trendingResponse] = await Promise.all([
+          api.get('/users/stats'),
+          api.get('/articles?limit=5&authorId=' + user.id),
+          api.get('/trending?limit=5')
+        ]);
 
-      setData({
-        stats: statsResponse.data,
-        recentReports: reportsResponse.data.reports,
-        trending: trendingResponse.data
-      });
+        setData({
+          stats: statsResponse.data,
+          recentArticles: articlesResponse.data.articles,
+          trending: trendingResponse.data
+        });
+      } else {
+        // For regular users, fetch reports
+        const [statsResponse, reportsResponse, trendingResponse] = await Promise.all([
+          api.get('/users/stats'),
+          api.get('/reports?limit=5'),
+          api.get('/trending?limit=5')
+        ]);
+
+        setData({
+          stats: statsResponse.data,
+          recentReports: reportsResponse.data.reports,
+          trending: trendingResponse.data
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
     } finally {
@@ -202,37 +230,77 @@ const Dashboard: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">إجمالي البلاغات</p>
-                  <p className="text-3xl font-bold text-gray-900">{data?.stats.totalReports || 0}</p>
+            {user?.role === 'REPORTER' ? (
+              // Reporter Stats
+              <>
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">إجمالي المقالات</p>
+                      <p className="text-3xl font-bold text-gray-900">{data?.stats.totalArticles || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green/20 to-mauritania-green/30 rounded-2xl flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-mauritania-green" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm text-green-600">
+                    <TrendingUp className="w-4 h-4 ml-1" />
+                    <span>+12% هذا الشهر</span>
+                  </div>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green/20 to-mauritania-green/30 rounded-2xl flex items-center justify-center">
-                  <FileText className="h-6 w-6 text-mauritania-green" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm text-green-600">
-                <TrendingUp className="w-4 h-4 ml-1" />
-                <span>+12% هذا الشهر</span>
-              </div>
-            </div>
 
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 mb-2">البلاغات المعتمدة</p>
-                  <p className="text-3xl font-bold text-gray-900">{data?.stats.approvedReports || 0}</p>
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">المقالات قيد المراجعة</p>
+                      <p className="text-3xl font-bold text-gray-900">{data?.stats.pendingArticles || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-yellow-500/20 to-yellow-600/30 rounded-2xl flex items-center justify-center">
+                      <Clock className="h-6 w-6 text-yellow-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm text-yellow-600">
+                    <Clock className="w-4 h-4 ml-1" />
+                    <span>في انتظار الموافقة</span>
+                  </div>
                 </div>
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-2xl flex items-center justify-center">
-                  <Award className="h-6 w-6 text-green-600" />
+              </>
+            ) : (
+              // Regular User Stats
+              <>
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">إجمالي البلاغات</p>
+                      <p className="text-3xl font-bold text-gray-900">{data?.stats.totalReports || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green/20 to-mauritania-green/30 rounded-2xl flex items-center justify-center">
+                      <FileText className="h-6 w-6 text-mauritania-green" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm text-green-600">
+                    <TrendingUp className="w-4 h-4 ml-1" />
+                    <span>+12% هذا الشهر</span>
+                  </div>
                 </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm text-green-600">
-                <CheckCircle className="w-4 h-4 ml-1" />
-                <span>معدل نجاح عالي</span>
-              </div>
-            </div>
+
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-medium text-gray-600 mb-2">البلاغات المعتمدة</p>
+                      <p className="text-3xl font-bold text-gray-900">{data?.stats.approvedReports || 0}</p>
+                    </div>
+                    <div className="w-12 h-12 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-2xl flex items-center justify-center">
+                      <Award className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+                  <div className="mt-4 flex items-center text-sm text-green-600">
+                    <CheckCircle className="w-4 h-4 ml-1" />
+                    <span>معدل نجاح عالي</span>
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
               <div className="flex items-center justify-between">
@@ -269,78 +337,153 @@ const Dashboard: React.FC = () => {
 
           {/* Content Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-            {/* Recent Reports */}
-            <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
-              <div className="p-6 border-b border-white/20 bg-gradient-to-r from-mauritania-green/5 to-mauritania-gold/5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gradient-to-br from-mauritania-green to-mauritania-gold rounded-xl flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-white" />
+            {user?.role === 'REPORTER' ? (
+              // Recent Articles for Reporters
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+                <div className="p-6 border-b border-white/20 bg-gradient-to-r from-mauritania-gold/5 to-mauritania-red/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-white" />
+                      </div>
+                      <h2 className="text-xl font-bold text-gray-900">المقالات الأخيرة</h2>
                     </div>
-                    <h2 className="text-xl font-bold text-gray-900">البلاغات الأخيرة</h2>
-                  </div>
-                  <Link
-                    href="/reports"
-                    className="text-mauritania-green hover:text-mauritania-green-dark font-semibold transition-colors hover:underline flex items-center gap-1"
-                  >
-                    عرض الكل
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-              <div className="p-6">
-                {data?.recentReports.length === 0 ? (
-                  <div className="text-center py-12">
-                    <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <FileText className="h-10 w-10 text-gray-400" />
-                    </div>
-                    <p className="text-gray-500 mb-4 text-lg">لا توجد بلاغات بعد</p>
                     <Link
-                      href="/reports/create"
-                      className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+                      href="/articles"
+                      className="text-mauritania-gold hover:text-mauritania-red font-semibold transition-colors hover:underline flex items-center gap-1"
                     >
-                      <Plus className="w-5 h-5 ml-2" />
-                      أنشئ أول بلاغ
+                      عرض الكل
+                      <ArrowRight className="w-4 h-4" />
                     </Link>
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    {data?.recentReports.map((report) => (
-                      <div key={report.id} className="group p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-green/30 hover:shadow-lg transition-all duration-300">
-                        <div className="flex items-center justify-between">
-                          <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-mauritania-green transition-colors">
-                              {report.title}
-                            </h3>
-                            <div className="flex items-center gap-4 text-sm">
-                              <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
-                                {getStatusIcon(report.status)}
-                                {report.status === 'APPROVED' ? 'معتمد' : 
-                                 report.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
-                              </span>
-                              <span className="flex items-center gap-1 text-gray-500">
-                                <Eye className="w-4 h-4" />
-                                {report.viewCount}
-                              </span>
-                              <span className="flex items-center gap-1 text-gray-500">
-                                <MessageCircle className="w-4 h-4" />
-                                {report._count.comments}
-                              </span>
-                            </div>
-                          </div>
-                          <Link
-                            href={`/reports/${report.id}`}
-                            className="text-mauritania-green hover:text-mauritania-green-dark text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-all duration-300"
-                          >
-                            عرض
-                          </Link>
-                        </div>
+                </div>
+                <div className="p-6">
+                  {data?.recentArticles?.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText className="h-10 w-10 text-gray-400" />
                       </div>
-                    ))}
-                  </div>
-                )}
+                      <p className="text-gray-500 mb-4 text-lg">لا توجد مقالات بعد</p>
+                      <Link
+                        href="/articles/create"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-gold to-mauritania-red text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+                      >
+                        <Plus className="w-5 h-5 ml-2" />
+                        أنشئ أول مقال
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {data?.recentArticles?.map((article) => (
+                        <div key={article.id} className="group p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-gold/30 hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-mauritania-gold transition-colors">
+                                {article.title}
+                              </h3>
+                              <div className="flex items-center gap-4 text-sm">
+                                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(article.status)}`}>
+                                  {getStatusIcon(article.status)}
+                                  {article.status === 'APPROVED' ? 'منشور' : 
+                                   article.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
+                                </span>
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <Eye className="w-4 h-4" />
+                                  {article.viewCount}
+                                </span>
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <MessageCircle className="w-4 h-4" />
+                                  {article._count.comments}
+                                </span>
+                              </div>
+                            </div>
+                            <Link
+                              href={`/articles/${article.id}`}
+                              className="text-mauritania-gold hover:text-mauritania-red text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-all duration-300"
+                            >
+                              عرض
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
+            ) : (
+              // Recent Reports for Regular Users
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
+                <div className="p-6 border-b border-white/20 bg-gradient-to-r from-mauritania-green/5 to-mauritania-gold/5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-mauritania-green to-mauritania-gold rounded-xl flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-white" />
+                      </div>
+                      <h2 className="text-xl font-bold text-gray-900">البلاغات الأخيرة</h2>
+                    </div>
+                    <Link
+                      href="/reports"
+                      className="text-mauritania-green hover:text-mauritania-green-dark font-semibold transition-colors hover:underline flex items-center gap-1"
+                    >
+                      عرض الكل
+                      <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="p-6">
+                  {data?.recentReports.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <FileText className="h-10 w-10 text-gray-400" />
+                      </div>
+                      <p className="text-gray-500 mb-4 text-lg">لا توجد بلاغات بعد</p>
+                      <Link
+                        href="/reports/create"
+                        className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+                      >
+                        <Plus className="w-5 h-5 ml-2" />
+                        أنشئ أول بلاغ
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {data?.recentReports.map((report) => (
+                        <div key={report.id} className="group p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-green/30 hover:shadow-lg transition-all duration-300">
+                          <div className="flex items-center justify-between">
+                            <div className="flex-1">
+                              <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-mauritania-green transition-colors">
+                                {report.title}
+                              </h3>
+                              <div className="flex items-center gap-4 text-sm">
+                                <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
+                                  {getStatusIcon(report.status)}
+                                  {report.status === 'APPROVED' ? 'معتمد' : 
+                                   report.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
+                                </span>
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <Eye className="w-4 h-4" />
+                                  {report.viewCount}
+                                </span>
+                                <span className="flex items-center gap-1 text-gray-500">
+                                  <MessageCircle className="w-4 h-4" />
+                                  {report._count.comments}
+                                </span>
+                              </div>
+                            </div>
+                            <Link
+                              href={`/reports/${report.id}`}
+                              className="text-mauritania-green hover:text-mauritania-green-dark text-sm font-semibold hover:underline opacity-0 group-hover:opacity-100 transition-all duration-300"
+                            >
+                              عرض
+                            </Link>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Trending Topics */}
             <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden">
@@ -412,24 +555,47 @@ const Dashboard: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900">إجراءات سريعة</h2>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <Link
-                href="/reports/create"
-                className="group p-6 bg-gradient-to-br from-mauritania-green/10 to-mauritania-green/20 rounded-2xl border border-mauritania-green/30 hover:border-mauritania-green/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green to-mauritania-green-dark rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Plus className="h-6 w-6 text-white" />
+              {user?.role === 'REPORTER' ? (
+                // Reporter Actions
+                <Link
+                  href="/articles/create"
+                  className="group p-6 bg-gradient-to-br from-mauritania-gold/10 to-mauritania-red/20 rounded-2xl border border-mauritania-gold/30 hover:border-mauritania-gold/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-mauritania-gold to-mauritania-red rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Plus className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 group-hover:text-mauritania-gold transition-colors text-lg">
+                        إنشاء مقال جديد
+                      </h3>
+                      <p className="text-gray-600">
+                        كتابة مقال جديد للمراجعة
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 group-hover:text-mauritania-green transition-colors text-lg">
-                      إرسال بلاغ
-                    </h3>
-                    <p className="text-gray-600">
-                      مشاركة خبر أو تقرير جديد
-                    </p>
+                </Link>
+              ) : (
+                // Regular User Actions
+                <Link
+                  href="/reports/create"
+                  className="group p-6 bg-gradient-to-br from-mauritania-green/10 to-mauritania-green/20 rounded-2xl border border-mauritania-green/30 hover:border-mauritania-green/50 hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-mauritania-green to-mauritania-green-dark rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <Plus className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 group-hover:text-mauritania-green transition-colors text-lg">
+                        إرسال بلاغ
+                      </h3>
+                      <p className="text-gray-600">
+                        مشاركة خبر أو تقرير جديد
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              )}
 
               <Link
                 href="/upload"
