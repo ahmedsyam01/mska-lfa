@@ -67,7 +67,7 @@ const ReportsPage: React.FC = () => {
 
   const handleReportAction = async (reportId: string, action: 'approve' | 'reject', note: string) => {
     try {
-      await api.patch(`/reports/${reportId}/review`, { status: action === 'approve' ? 'APPROVED' : 'REJECTED', reviewNote: note });
+              await api.patch(`/reports/${reportId}/review`, { status: action === 'approve' ? 'PUBLISHED' : 'REJECTED', reviewNote: note });
       fetchReports(currentPage);
     } catch (err) {
       console.error('Error updating report:', err);
@@ -78,7 +78,7 @@ const ReportsPage: React.FC = () => {
     switch (status) {
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800';
-      case 'APPROVED':
+      case 'PUBLISHED':
         return 'bg-green-100 text-green-800';
       case 'REJECTED':
         return 'bg-red-100 text-red-800';
@@ -178,7 +178,7 @@ const ReportsPage: React.FC = () => {
                 >
                   <option value="">{t('common.all')}</option>
                   <option value="PENDING">{t('reports.status.pending')}</option>
-                  <option value="APPROVED">{t('reports.status.approved')}</option>
+                  <option value="PUBLISHED">{t('reports.status.published')}</option>
                   <option value="REJECTED">{t('reports.status.rejected')}</option>
                 </select>
               </div>

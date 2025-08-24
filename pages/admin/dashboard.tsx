@@ -53,7 +53,7 @@ interface AdminDashboardData {
     title: string;
     author: string;
     createdAt: string;
-    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
   }>;
   systemMetrics: {
     serverUptime: string;
@@ -765,7 +765,7 @@ const AdminDashboard: React.FC = () => {
                               <td className="px-3 py-2 border font-medium">{a.title}</td>
                               <td className="px-3 py-2 border">{a.author ? `${a.author.firstName || ''} ${a.author.lastName || ''}` : 'غير معروف'}</td>
                               <td className="px-3 py-2 border">
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'APPROVED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'APPROVED' ? 'منشور' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'PUBLISHED' ? 'منشور' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
                               </td>
                               <td className="px-3 py-2 border">{new Date(a.createdAt).toLocaleDateString('ar-EG')}</td>
                               <td className="px-3 py-2 border flex gap-2">
@@ -818,7 +818,7 @@ const AdminDashboard: React.FC = () => {
                               <td className="px-3 py-2 border font-medium">{r.title}</td>
                               <td className="px-3 py-2 border">{r.reporter ? `${r.reporter.firstName || ''} ${r.reporter.lastName || ''}` : 'غير معروف'}</td>
                               <td className="px-3 py-2 border">
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${r.status === 'APPROVED' ? 'bg-green-100 text-green-700' : r.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{r.status === 'APPROVED' ? 'معتمد' : r.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${r.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' : r.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{r.status === 'PUBLISHED' ? 'منشور' : r.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
                               </td>
                               <td className="px-3 py-2 border">{new Date(r.createdAt).toLocaleDateString('ar-EG')}</td>
                               <td className="px-3 py-2 border flex gap-2">

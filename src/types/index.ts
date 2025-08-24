@@ -100,7 +100,7 @@ export interface Report {
   location: string;
   category: string;
   priority: 'LOW' | 'MEDIUM' | 'HIGH';
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
+  status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
   tags: string[];
   mediaUrls: string[];
   coordinates?: Coordinates;

@@ -34,7 +34,7 @@ import Link from 'next/link';
 interface DashboardData {
   stats: {
     totalReports: number;
-    approvedReports: number;
+    publishedReports: number;
     pendingReports: number;
     totalArticles?: number;
     pendingArticles?: number;
@@ -44,7 +44,7 @@ interface DashboardData {
   recentReports?: Array<{
     id: string;
     title: string;
-    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
     createdAt: string;
     viewCount: number;
     _count: {
@@ -54,7 +54,7 @@ interface DashboardData {
   recentArticles?: Array<{
     id: string;
     title: string;
-    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
     createdAt: string;
     viewCount: number;
     _count: {
@@ -136,7 +136,7 @@ const Dashboard: React.FC = () => {
             totalComments,
             // Keep these for compatibility but they won't be used for reporters
             totalReports: 0,
-            approvedReports: 0,
+            publishedReports: 0,
             pendingReports: 0
           },
           recentArticles,
@@ -153,7 +153,7 @@ const Dashboard: React.FC = () => {
         setData({
           stats: {
             totalReports: reportsStatsResponse.data.totalReports || 0,
-            approvedReports: reportsStatsResponse.data.approvedReports || 0,
+            publishedReports: reportsStatsResponse.data.publishedReports || 0,
             pendingReports: reportsStatsResponse.data.pendingReports || 0,
             totalViews: reportsStatsResponse.data.totalViews || 0,
             totalComments: reportsStatsResponse.data.totalComments || 0,
@@ -173,7 +173,7 @@ const Dashboard: React.FC = () => {
           totalArticles: 0,
           pendingArticles: 0,
           totalReports: 0,
-          approvedReports: 0,
+                      publishedReports: 0,
           pendingReports: 0,
           totalViews: 0,
           totalComments: 0
@@ -189,7 +189,7 @@ const Dashboard: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'APPROVED':
+      case 'PUBLISHED':
         return 'bg-gradient-to-r from-green-100 to-green-200 text-green-800 border-green-300';
       case 'PENDING':
         return 'bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300';
@@ -202,7 +202,7 @@ const Dashboard: React.FC = () => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'APPROVED':
+      case 'PUBLISHED':
         return <CheckCircle className="w-4 h-4" />;
       case 'PENDING':
         return <Clock className="w-4 h-4" />;
@@ -366,8 +366,8 @@ const Dashboard: React.FC = () => {
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600 mb-2">البلاغات المعتمدة</p>
-                      <p className="text-3xl font-bold text-gray-900">{data?.stats.approvedReports || 0}</p>
+                                              <p className="text-sm font-medium text-gray-600 mb-2">البلاغات المنشورة</p>
+                      <p className="text-3xl font-bold text-gray-900">{data?.stats.publishedReports || 0}</p>
                     </div>
                     <div className="w-12 h-12 bg-gradient-to-br from-green-500/20 to-green-600/30 rounded-2xl flex items-center justify-center">
                       <Award className="h-6 w-6 text-green-600" />
@@ -463,7 +463,7 @@ const Dashboard: React.FC = () => {
                               <div className="flex items-center gap-4 text-sm">
                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(article.status)}`}>
                                   {getStatusIcon(article.status)}
-                                  {article.status === 'APPROVED' ? 'منشور' : 
+                                  {article.status === 'PUBLISHED' ? 'منشور' : 
                                    article.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
                                 </span>
                                 <span className="flex items-center gap-1 text-gray-500">
@@ -536,7 +536,7 @@ const Dashboard: React.FC = () => {
                               <div className="flex items-center gap-4 text-sm">
                                 <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(report.status)}`}>
                                   {getStatusIcon(report.status)}
-                                  {report.status === 'APPROVED' ? 'معتمد' : 
+                                  {report.status === 'PUBLISHED' ? 'منشور' : 
                                    report.status === 'PENDING' ? 'قيد المراجعة' : 'مرفوض'}
                                 </span>
                                 <span className="flex items-center gap-1 text-gray-500">
