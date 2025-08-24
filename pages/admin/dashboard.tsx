@@ -250,14 +250,14 @@ const AdminDashboard: React.FC = () => {
     // eslint-disable-next-line
   }, [activeTab, articlesPage, reportsPage]);
 
-  const handleApproveArticle = async (id: string) => {
+  const handlePublishArticle = async (id: string) => {
     setArticleActionLoading(id + '-approve');
     try {
       await adminAPI.approveArticle(id);
       fetchArticles(articlesPage);
     } catch (error) {
-      console.error('Error approving article:', error);
-      alert('فشل في الموافقة على المقال');
+      console.error('Error publishing article:', error);
+      alert('فشل في نشر المقال');
     } finally {
       setArticleActionLoading(null);
     }
@@ -765,11 +765,11 @@ const AdminDashboard: React.FC = () => {
                               <td className="px-3 py-2 border font-medium">{a.title}</td>
                               <td className="px-3 py-2 border">{a.author ? `${a.author.firstName || ''} ${a.author.lastName || ''}` : 'غير معروف'}</td>
                               <td className="px-3 py-2 border">
-                                <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'APPROVED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'APPROVED' ? 'معتمد' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
+                                <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'APPROVED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'APPROVED' ? 'منشور' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
                               </td>
                               <td className="px-3 py-2 border">{new Date(a.createdAt).toLocaleDateString('ar-EG')}</td>
                               <td className="px-3 py-2 border flex gap-2">
-                                <button onClick={() => handleApproveArticle(a.id)} disabled={articleActionLoading===a.id+'-approve'} className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-300">موافقة</button>
+                                <button onClick={() => handlePublishArticle(a.id)} disabled={articleActionLoading===a.id+'-approve'} className="px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-green-300">نشر</button>
                                 <button onClick={() => handleRejectArticle(a.id)} disabled={articleActionLoading===a.id+'-reject'} className="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-red-300">رفض</button>
                                 <button onClick={() => handleEditArticle(a.id)} className="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-blue-300">تعديل</button>
                                 <button onClick={() => handleDeleteArticle(a.id)} disabled={articleActionLoading===a.id+'-delete'} className="px-2 py-1 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-gray-300">حذف</button>
