@@ -39,7 +39,7 @@ interface DashboardData {
     totalViews: number;
     totalComments: number;
   };
-  recentReports: Array<{
+  recentReports?: Array<{
     id: string;
     title: string;
     status: 'PENDING' | 'APPROVED' | 'REJECTED';
@@ -431,7 +431,7 @@ const Dashboard: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-6">
-                  {data?.recentReports.length === 0 ? (
+                  {data?.recentReports?.length === 0 ? (
                     <div className="text-center py-12">
                       <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
                         <FileText className="h-10 w-10 text-gray-400" />
@@ -447,7 +447,7 @@ const Dashboard: React.FC = () => {
                     </div>
                   ) : (
                     <div className="space-y-4">
-                      {data?.recentReports.map((report) => (
+                      {data?.recentReports?.map((report) => (
                         <div key={report.id} className="group p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-green/30 hover:shadow-lg transition-all duration-300">
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
