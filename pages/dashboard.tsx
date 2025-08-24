@@ -26,7 +26,8 @@ import {
   Sparkles,
   Target,
   Zap,
-  User
+  User,
+  RefreshCw
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -82,6 +83,22 @@ const Dashboard: React.FC = () => {
     }
   }, [isAuthenticated]);
 
+  // Add refresh when component becomes visible (e.g., returning from article creation)
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!document.hidden && isAuthenticated) {
+        fetchDashboardData();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [isAuthenticated]);
+
+  const handleRefresh = () => {
+    fetchDashboardData();
+  };
+
   const fetchDashboardData = async () => {
     try {
       if (!user) {
@@ -90,25 +107,39 @@ const Dashboard: React.FC = () => {
       }
 
       if (user.role === 'REPORTER') {
-        // For reporters, fetch articles statistics and recent articles
-        const [articlesStatsResponse, articlesResponse, featuredNewsResponse] = await Promise.all([
-          api.get('/articles/stats?authorId=' + user.id), // Get articles statistics for the reporter
-          api.get('/articles?limit=5&authorId=' + user.id),
+        // For reporters, fetch all articles and calculate statistics on frontend
+        // Since /articles/stats endpoint doesn't exist in backend
+        const [articlesResponse, featuredNewsResponse] = await Promise.all([
+          api.get('/articles'), // Get all articles
           api.get('/featured-news?limit=5')
         ]);
 
+        // Calculate statistics from the articles data
+        const allArticles = articlesResponse.data.articles || [];
+        const userArticles = allArticles.filter((article: any) => article.authorId === user.id);
+        
+        const totalArticles = userArticles.length;
+        const pendingArticles = userArticles.filter((article: any) => article.status === 'PENDING').length;
+        const totalViews = userArticles.reduce((sum: number, article: any) => sum + (article.viewCount || 0), 0);
+        const totalComments = userArticles.reduce((sum: number, article: any) => sum + (article._count?.comments || 0), 0);
+
+        // Get recent articles (limit to 5)
+        const recentArticles = userArticles
+          .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+          .slice(0, 5);
+
         setData({
           stats: {
-            totalArticles: articlesStatsResponse.data.totalArticles || 0,
-            pendingArticles: articlesStatsResponse.data.pendingArticles || 0,
-            totalViews: articlesStatsResponse.data.totalViews || 0,
-            totalComments: articlesStatsResponse.data.totalComments || 0,
+            totalArticles,
+            pendingArticles,
+            totalViews,
+            totalComments,
             // Keep these for compatibility but they won't be used for reporters
             totalReports: 0,
             approvedReports: 0,
             pendingReports: 0
           },
-          recentArticles: articlesResponse.data.articles,
+          recentArticles,
           featuredNews: featuredNewsResponse.data
         });
       } else {
@@ -239,6 +270,14 @@ const Dashboard: React.FC = () => {
               </p>
             </div>
             <div className="flex gap-4">
+              <button
+                onClick={handleRefresh}
+                disabled={loading}
+                className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              >
+                <RefreshCw className={`w-5 h-5 ml-2 ${loading ? 'animate-spin' : ''}`} />
+                تحديث
+              </button>
               {user?.role === 'REPORTER' ? (
                 <Link
                   href="/articles/create"
