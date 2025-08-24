@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Calendar, Eye, MessageCircle, Share2, Heart } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format, parseISO } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import { fixImageUrl } from '../../utils/imageUrl';
 
@@ -30,10 +30,44 @@ interface NewsCardProps {
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => {
   const formatDate = (dateString: string) => {
-    return formatDistanceToNow(new Date(dateString), {
-      addSuffix: true,
-      locale: ar
-    });
+    try {
+      // Parse the date string and handle timezone issues
+      let date: Date;
+      
+      // Check if the date string is already a valid date
+      if (dateString.includes('T') || dateString.includes('Z')) {
+        // ISO format date
+        date = parseISO(dateString);
+      } else {
+        // Try to parse as regular date string
+        date = new Date(dateString);
+      }
+      
+      // Validate the date
+      if (isNaN(date.getTime())) {
+        console.warn('Invalid date string:', dateString);
+        return 'تاريخ غير محدد';
+      }
+      
+      // Get current time
+      const now = new Date();
+      const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
+      
+      // If less than 24 hours, show relative time
+      if (diffInMinutes < 1440) {
+        return formatDistanceToNow(date, {
+          addSuffix: true,
+          locale: ar
+        });
+      }
+      
+      // If more than 24 hours, show absolute date
+      return format(date, 'dd/MM/yyyy', { locale: ar });
+      
+    } catch (error) {
+      console.error('Error formatting date:', error, 'Date string:', dateString);
+      return 'تاريخ غير محدد';
+    }
   };
 
   // Fallback source data if not provided

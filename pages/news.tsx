@@ -51,6 +51,22 @@ const NewsPage: React.FC = () => {
       console.log('Total from pagination:', data.pagination?.total);
       console.log('Current Page:', currentPage);
       
+      // Debug: Log the first few articles' publishedAt values
+      if (data.articles && data.articles.length > 0) {
+        console.log('Sample publishedAt values:');
+        data.articles.slice(0, 3).forEach((article: any, index: number) => {
+          console.log(`Article ${index + 1}:`, {
+            id: article.id,
+            title: article.title,
+            publishedAt: article.publishedAt,
+            publishedAtType: typeof article.publishedAt,
+            publishedAtParsed: new Date(article.publishedAt),
+            publishedAtISO: new Date(article.publishedAt).toISOString(),
+            publishedAtLocal: new Date(article.publishedAt).toString()
+          });
+        });
+      }
+      
       setArticles(data.articles || []);
       // Fix: Get total from pagination object
       const totalCount = data.pagination?.total || 0;
@@ -290,6 +306,23 @@ const NewsPage: React.FC = () => {
           <p className="text-mauritania-red-dark text-sm">Articles Per Page: {articlesPerPage}</p>
           <p className="text-mauritania-red-dark text-sm">Should Show Pagination: {totalPages > 1 ? 'Yes' : 'No'}</p>
         </div>
+
+        {/* Date Debug Info - Remove this after testing */}
+        {articles.length > 0 && (
+          <div className="mt-4 p-6 bg-gradient-to-r from-mauritania-blue/10 to-mauritania-blue/20 rounded-2xl border border-mauritania-blue/30">
+            <p className="text-mauritania-blue-dark font-semibold mb-2">Date Debug Info (First 3 Articles):</p>
+            {articles.slice(0, 3).map((article, index) => (
+              <div key={article.id} className="mb-3 p-3 bg-white/50 rounded-lg">
+                <p className="text-mauritania-blue-dark text-sm font-medium">Article {index + 1}: {article.title.substring(0, 50)}...</p>
+                <p className="text-mauritania-blue-dark text-xs">Raw publishedAt: {article.publishedAt}</p>
+                <p className="text-mauritania-blue-dark text-xs">Type: {typeof article.publishedAt}</p>
+                <p className="text-mauritania-blue-dark text-xs">Parsed Date: {new Date(article.publishedAt).toString()}</p>
+                <p className="text-mauritania-blue-dark text-xs">ISO: {new Date(article.publishedAt).toISOString()}</p>
+                <p className="text-mauritania-blue-dark text-xs">Local: {new Date(article.publishedAt).toLocaleString('ar-MA')}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Trending Topics Sidebar */}
         <div className="mt-16 modern-card p-8">
