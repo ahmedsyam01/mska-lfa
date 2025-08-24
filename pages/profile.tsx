@@ -85,7 +85,15 @@ const Profile: React.FC = () => {
     setError(null);
 
     try {
-      await api.put('/users/me', formData);
+      // Only send fields that the backend allows for updates
+      const updateData = {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        bio: formData.bio,
+        location: formData.location
+      };
+
+      await api.put('/users/me', updateData);
       setSuccess(true);
       setIsEditing(false);
       
@@ -301,10 +309,11 @@ const Profile: React.FC = () => {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      disabled={!isEditing}
+                      disabled={true}
                       className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg disabled:bg-gray-50 disabled:cursor-not-allowed"
                     />
                   </div>
+                  <p className="text-sm text-gray-500 text-right mt-1">لا يمكن تغيير البريد الإلكتروني</p>
                 </div>
 
                 {/* Phone and Location Row */}
@@ -323,11 +332,12 @@ const Profile: React.FC = () => {
                         name="phoneNumber"
                         value={formData.phoneNumber}
                         onChange={handleChange}
-                        disabled={!isEditing}
+                        disabled={true}
                         className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg disabled:bg-gray-50 disabled:cursor-not-allowed"
                         placeholder="+222 12345678"
                       />
                     </div>
+                    <p className="text-sm text-gray-500 text-right mt-1">لا يمكن تغيير رقم الهاتف</p>
                   </div>
                   
                   <div>
