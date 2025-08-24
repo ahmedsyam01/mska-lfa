@@ -16,7 +16,7 @@ const Layout: React.FC<LayoutProps> = ({
   description = 'ابق على اطلاع بآخر الأخبار من موريتانيا والمنطقة. نقدم لك تغطية شاملة للأحداث السياسية والاقتصادية والثقافية والرياضية.'
 }) => {
   return (
-    <div dir="rtl" className="min-h-screen bg-gray-50">
+    <div dir="rtl" className="min-h-screen bg-gradient-to-br from-mauritania-green-light/5 via-white to-mauritania-gold-light/5">
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
@@ -30,7 +30,6 @@ const Layout: React.FC<LayoutProps> = ({
         {children}
       </main>
       <Footer />
-
     </div>
   );
 };
