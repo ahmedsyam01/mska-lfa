@@ -16,6 +16,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import Link from 'next/link';
+import Cookies from 'js-cookie';
 
 interface ProfileForm {
   firstName: string;
@@ -81,6 +82,14 @@ const Profile: React.FC = () => {
     setError(null);
 
     try {
+      // Debug: Check authentication token
+      const token = Cookies.get('rimna_token');
+      console.log('🔐 Auth token check:', {
+        hasToken: !!token,
+        tokenLength: token?.length,
+        tokenStart: token?.substring(0, 20) + '...'
+      });
+
       // Only send fields that the backend allows for updates
       const updateData = {
         firstName: formData.firstName,
