@@ -139,6 +139,19 @@ const Dashboard: React.FC = () => {
             return true;
           }
           
+          // Additional check: if article was created recently and has no sourceName, it might be user-created
+          if (!article.authorId && !article.sourceName) {
+            const articleDate = new Date(article.createdAt);
+            const now = new Date();
+            const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
+            
+            // If article was created in the last 7 days and has no sourceName, consider it user-created
+            if (daysDiff <= 7) {
+              console.log('🔍 Potential user article (recent, no sourceName):', article);
+              return true;
+            }
+          }
+          
           return false;
         });
         
@@ -154,12 +167,25 @@ const Dashboard: React.FC = () => {
             status: a.status,
             createdAt: a.createdAt
           })),
-          allArticlesSample: allArticles.slice(0, 3).map((a: any) => ({
+          allArticlesSample: allArticles.slice(0, 5).map((a: any) => ({
             id: a.id,
             title: a.title,
             authorId: a.authorId,
             sourceName: a.sourceName,
-            status: a.status
+            status: a.status,
+            createdAt: a.createdAt
+          })),
+          // Check if any articles might belong to this user
+          potentialUserArticles: allArticles.filter((a: any) => 
+            a.authorId === user.id || 
+            (!a.authorId && !a.sourceName && a.status === 'PENDING')
+          ).map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            authorId: a.authorId,
+            sourceName: a.sourceName,
+            status: a.status,
+            createdAt: a.createdAt
           }))
         });
         
@@ -324,7 +350,17 @@ const Dashboard: React.FC = () => {
                 className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
               >
                 <RefreshCw className={`w-5 h-5 ml-2 ${loading ? 'animate-spin' : ''}`} />
-                تحديث
+                تحديث البيانات
+              </button>
+              <button
+                onClick={() => {
+                  console.log('🔄 Manual refresh triggered');
+                  fetchDashboardData();
+                }}
+                className="inline-flex items-center px-4 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
+              >
+                <RefreshCw className="w-5 h-5 ml-2" />
+                تحديث يدوي
               </button>
               {user?.role === 'REPORTER' ? (
                 <Link
