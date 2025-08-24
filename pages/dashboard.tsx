@@ -109,9 +109,9 @@ const Dashboard: React.FC = () => {
       if (user.role === 'REPORTER') {
         // For reporters, fetch all articles and calculate statistics on frontend
         // Since /articles/stats endpoint doesn't exist in backend
-        const [articlesResponse, featuredNewsResponse] = await Promise.all([
+        const [articlesResponse, trendingResponse] = await Promise.all([
           api.get('/articles'), // Get all articles
-          api.get('/featured-news?limit=5').catch(() => ({ data: [] })) // Fallback if featured-news fails
+          api.get('/trending?limit=5').catch(() => ({ data: [] })) // Fallback if trending fails
         ]);
 
         // Calculate statistics from the articles data
@@ -136,6 +136,7 @@ const Dashboard: React.FC = () => {
         console.log('🔍 Dashboard Debug:', {
           totalArticlesFound: allArticles.length,
           userArticlesFound: userArticles.length,
+          userId: user.id,
           userArticles: userArticles.map((a: any) => ({
             id: a.id,
             title: a.title,
@@ -143,6 +144,13 @@ const Dashboard: React.FC = () => {
             sourceName: a.sourceName,
             status: a.status,
             createdAt: a.createdAt
+          })),
+          allArticlesSample: allArticles.slice(0, 3).map((a: any) => ({
+            id: a.id,
+            title: a.title,
+            authorId: a.authorId,
+            sourceName: a.sourceName,
+            status: a.status
           }))
         });
         
@@ -168,14 +176,14 @@ const Dashboard: React.FC = () => {
             pendingReports: 0
           },
           recentArticles,
-          featuredNews: featuredNewsResponse.data || []
+          featuredNews: trendingResponse.data || []
         });
       } else {
         // For regular users, fetch reports statistics
-        const [reportsStatsResponse, reportsResponse, featuredNewsResponse] = await Promise.all([
+        const [reportsStatsResponse, reportsResponse, trendingResponse] = await Promise.all([
           api.get('/reports/stats?reporterId=' + user.id), // Get reports statistics for the user
           api.get('/reports?limit=5'),
-          api.get('/featured-news?limit=5').catch(() => ({ data: [] })) // Fallback if featured-news fails
+          api.get('/trending?limit=5').catch(() => ({ data: [] })) // Fallback if trending fails
         ]);
 
         setData({
@@ -190,7 +198,7 @@ const Dashboard: React.FC = () => {
             pendingArticles: 0
           },
           recentReports: reportsResponse.data.reports,
-          featuredNews: featuredNewsResponse.data || []
+          featuredNews: trendingResponse.data || []
         });
       }
     } catch (error) {
@@ -636,8 +644,8 @@ const Dashboard: React.FC = () => {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {data?.featuredNews.map((news, index) => (
-                      <div key={news.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-gold/30 hover:shadow-lg transition-all duration-300">
+                    {data?.featuredNews.map((topic, index) => (
+                      <div key={topic.id} className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-white rounded-2xl border border-gray-100 hover:border-mauritania-gold/30 hover:shadow-lg transition-all duration-300">
                         <div className="flex items-center gap-4">
                           <span className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
                             index === 0 ? 'bg-gradient-to-br from-yellow-400 to-yellow-600 text-white' :
@@ -649,16 +657,16 @@ const Dashboard: React.FC = () => {
                           </span>
                           <div>
                             <h3 className="font-semibold text-gray-900">
-                              {news.title}
+                              {topic.topic || topic.topicAr || 'موضوع رائج'}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              {news.excerpt}
+                              {topic.description || topic.descriptionAr || 'موضوع شائع'}
                             </p>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 text-sm text-gray-500">
                           <BarChart3 className="w-4 h-4" />
-                          <span className="font-semibold">{news.views}</span>
+                          <span className="font-semibold">{topic.count || 0}</span>
                         </div>
                       </div>
                     ))}
