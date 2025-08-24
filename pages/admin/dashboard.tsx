@@ -772,28 +772,15 @@ const AdminDashboard: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody>
-                          {articles.map((a) => {
-                            // Debug logging for articles
-                            if (a.status === 'PENDING') {
-                              console.log('🔍 Pending Article Debug:', {
-                                id: a.id,
-                                title: a.title,
-                                authorId: a.authorId,
-                                author: a.author,
-                                sourceName: a.sourceName,
-                                status: a.status
-                              });
-                            }
-                            
-                            return (
+                          {articles.map((a) => (
                             <tr key={a.id} className="border-b hover:bg-gray-50 transition-colors">
                               <td className="px-3 py-2 border font-medium">{a.title}</td>
-                              <td className="px-3 py-2 border">
-                                {a.author ? `${a.author.firstName || ''} ${a.author.lastName || ''}` : 
-                                 a.authorId ? `صحفي (ID: ${a.authorId.slice(0, 8)}...)` : 
-                                 a.sourceName ? `مصدر: ${a.sourceName}` : 
-                                 a.status === 'PENDING' ? `صحفي جديد (${a.authorId ? 'ID: ' + a.authorId.slice(0, 8) + '...' : 'غير محدد'})` : 'مجهول المصدر'}
-                              </td>
+                                                             <td className="px-3 py-2 border">
+                                 {a.author ? `${a.author.firstName || ''} ${a.author.lastName || ''}` : 
+                                  a.authorId ? `صحفي (${a.authorId.slice(0, 8)}...)` : 
+                                  a.sourceName ? `مصدر: ${a.sourceName}` : 
+                                  a.status === 'PENDING' ? 'صحفي جديد' : 'مجهول المصدر'}
+                               </td>
                               <td className="px-3 py-2 border">
                                 <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'PUBLISHED' ? 'منشور' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
                               </td>
