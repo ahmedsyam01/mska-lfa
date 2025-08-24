@@ -84,7 +84,12 @@ const Dashboard: React.FC = () => {
 
   const fetchDashboardData = async () => {
     try {
-      if (user?.role === 'REPORTER') {
+      if (!user) {
+        console.error('No user data available');
+        return;
+      }
+
+      if (user.role === 'REPORTER') {
         // For reporters, fetch articles statistics and recent articles
         const [articlesStatsResponse, articlesResponse, featuredNewsResponse] = await Promise.all([
           api.get('/articles/stats?authorId=' + user.id), // Get articles statistics for the reporter
