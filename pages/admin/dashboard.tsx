@@ -731,7 +731,17 @@ const AdminDashboard: React.FC = () => {
                 {/* Articles Section */}
                 <div className="bg-white rounded-lg shadow-sm p-6 animate-fade-in">
                   <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold flex items-center"><FileText className="ml-2" />المقالات</h2>
+                    <div>
+                      <h2 className="text-xl font-bold flex items-center"><FileText className="ml-2" />المقالات</h2>
+                      {/* Debug Info */}
+                      <div className="text-sm text-gray-600 mt-1">
+                        <span className="font-medium">Total:</span> {articles.length} | 
+                        <span className="font-medium"> Pending:</span> {articles.filter(a => a.status === 'PENDING').length} | 
+                        <span className="font-medium"> Published:</span> {articles.filter(a => a.status === 'PUBLISHED').length} | 
+                        <span className="font-medium"> With Source:</span> {articles.filter(a => a.sourceName).length} | 
+                        <span className="font-medium"> No Source:</span> {articles.filter(a => !a.sourceName).length}
+                      </div>
+                    </div>
                     <button
                       onClick={() => router.push('/admin/articles/new')}
                       className="px-4 py-2 bg-primary-600 text-white rounded-lg shadow hover:bg-primary-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-400"
@@ -765,7 +775,9 @@ const AdminDashboard: React.FC = () => {
                               <td className="px-3 py-2 border font-medium">{a.title}</td>
                               <td className="px-3 py-2 border">
                                 {a.author ? `${a.author.firstName || ''} ${a.author.lastName || ''}` : 
-                                 a.authorId ? 'مستخدم محذوف' : 'مجهول المصدر'}
+                                 a.authorId ? 'مستخدم محذوف' : 
+                                 a.sourceName ? `مصدر: ${a.sourceName}` : 
+                                 a.status === 'PENDING' ? 'صحفي (في انتظار المراجعة)' : 'مجهول المصدر'}
                               </td>
                               <td className="px-3 py-2 border">
                                 <span className={`px-2 py-1 rounded text-xs font-bold ${a.status === 'PUBLISHED' ? 'bg-green-100 text-green-700' : a.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>{a.status === 'PUBLISHED' ? 'منشور' : a.status === 'PENDING' ? 'معلق' : 'مرفوض'}</span>
