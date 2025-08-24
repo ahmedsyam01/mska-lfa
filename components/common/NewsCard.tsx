@@ -13,7 +13,8 @@ interface NewsCardProps {
     description: string;
     descriptionAr?: string;
     imageUrl?: string;
-    publishedAt: string;
+    publishedAt?: string | null;
+    createdAt?: string | null;
     category: string;
     source?: {
       id: string;
@@ -29,8 +30,14 @@ interface NewsCardProps {
 }
 
 const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => {
-  const formatDate = (dateString: string) => {
+  const formatDate = (dateString: string | null | undefined) => {
     try {
+      // If no date string provided, try to use createdAt as fallback
+      if (!dateString) {
+        console.warn('No publishedAt date provided for article:', article.id);
+        return 'تاريخ غير محدد';
+      }
+      
       // Parse the date string and handle timezone issues
       let date: Date;
       
@@ -45,7 +52,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
       
       // Validate the date
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date string:', dateString);
+        console.warn('Invalid date string:', dateString, 'for article:', article.id);
         return 'تاريخ غير محدد';
       }
       
@@ -65,9 +72,16 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
       return format(date, 'dd/MM/yyyy', { locale: ar });
       
     } catch (error) {
-      console.error('Error formatting date:', error, 'Date string:', dateString);
+      console.error('Error formatting date:', error, 'Date string:', dateString, 'for article:', article.id);
       return 'تاريخ غير محدد';
     }
+  };
+
+  // Get the best available date for display
+  const getDisplayDate = () => {
+    // Try publishedAt first, then createdAt as fallback
+    const dateToUse = article.publishedAt || article.createdAt;
+    return formatDate(dateToUse);
   };
 
   // Fallback source data if not provided
@@ -150,7 +164,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
               <div className="flex items-center gap-3 mt-3 text-xs text-gray-500 justify-end">
                 <div className="flex items-center gap-1 space-x-reverse text-mauritania-gold-dark">
                   <Calendar className="w-3 h-3" />
-                  <span>{formatDate(article.publishedAt)}</span>
+                  <span>{getDisplayDate()}</span>
                 </div>
                 <div className="w-1 h-1 bg-mauritania-gold rounded-full"></div>
                 <span className="font-medium text-mauritania-green-dark">
@@ -202,7 +216,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
               <div className="flex items-center gap-6 text-sm text-gray-500 space-x-reverse">
                 <div className="flex items-center gap-2 space-x-reverse text-mauritania-gold-dark">
                   <Calendar className="w-4 h-4" />
-                  <span>{formatDate(article.publishedAt)}</span>
+                  <span>{getDisplayDate()}</span>
                 </div>
                 <div className="flex items-center gap-2 space-x-reverse text-mauritania-green-dark">
                   <Eye className="w-4 h-4" />
@@ -256,7 +270,7 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
             <div className="flex items-center gap-3 space-x-reverse">
               <div className="flex items-center gap-1 space-x-reverse text-mauritania-gold-dark">
                 <Calendar className="w-3 h-3" />
-                <span>{formatDate(article.publishedAt)}</span>
+                <span>{getDisplayDate()}</span>
               </div>
               <div className="w-1 h-1 bg-mauritania-gold rounded-full"></div>
               <span className="font-medium text-mauritania-green-dark">

@@ -9,7 +9,8 @@ interface Article {
   id: string;
   title: string;
   description: string;
-  publishedAt: string;
+  publishedAt?: string | null;
+  createdAt?: string | null;
   imageUrl?: string;
   category: string;
   source?: {
@@ -91,7 +92,7 @@ const NewsPage: React.FC = () => {
 
   const sortedArticles = [...filteredArticles].sort((a, b) => {
     if (sortBy === 'latest') {
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      return new Date(b.publishedAt || b.createdAt || '').getTime() - new Date(a.publishedAt || a.createdAt || '').getTime();
     } else if (sortBy === 'trending') {
       return b.viewCount - a.viewCount;
     }
@@ -314,11 +315,14 @@ const NewsPage: React.FC = () => {
             {articles.slice(0, 3).map((article, index) => (
               <div key={article.id} className="mb-3 p-3 bg-white/50 rounded-lg">
                 <p className="text-mauritania-blue-dark text-sm font-medium">Article {index + 1}: {article.title.substring(0, 50)}...</p>
-                <p className="text-mauritania-blue-dark text-xs">Raw publishedAt: {article.publishedAt}</p>
-                <p className="text-mauritania-blue-dark text-xs">Type: {typeof article.publishedAt}</p>
-                <p className="text-mauritania-blue-dark text-xs">Parsed Date: {new Date(article.publishedAt).toString()}</p>
-                <p className="text-mauritania-blue-dark text-xs">ISO: {new Date(article.publishedAt).toISOString()}</p>
-                <p className="text-mauritania-blue-dark text-xs">Local: {new Date(article.publishedAt).toLocaleString('ar-MA')}</p>
+                <p className="text-mauritania-blue-dark text-xs">Raw publishedAt: {article.publishedAt || 'null'}</p>
+                <p className="text-mauritania-blue-dark text-xs">Raw createdAt: {article.createdAt || 'null'}</p>
+                <p className="text-mauritania-blue-dark text-xs">Type publishedAt: {typeof article.publishedAt}</p>
+                <p className="text-mauritania-blue-dark text-xs">Type createdAt: {typeof article.createdAt}</p>
+                <p className="text-mauritania-blue-dark text-xs">Best Date: {article.publishedAt || article.createdAt || 'No date available'}</p>
+                <p className="text-mauritania-blue-dark text-xs">Parsed Date: {new Date(article.publishedAt || article.createdAt || '').toString()}</p>
+                <p className="text-mauritania-blue-dark text-xs">ISO: {new Date(article.publishedAt || article.createdAt || '').toISOString()}</p>
+                <p className="text-mauritania-blue-dark text-xs">Local: {new Date(article.publishedAt || article.createdAt || '').toLocaleString('ar-MA')}</p>
               </div>
             ))}
           </div>
