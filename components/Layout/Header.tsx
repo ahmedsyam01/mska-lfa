@@ -53,18 +53,7 @@ const Header: React.FC = () => {
             </div>
 
             {/* Language and Search */}
-            <div className="flex items-center space-x-4 space-x-reverse">
-              <button className="flex items-center space-x-2 space-x-reverse px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 border border-white/20">
-                <Globe className="w-4 h-4" />
-                <span className="text-sm">Français</span>
-              </button>
-              <button className="flex items-center space-x-2 space-x-reverse px-4 py-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 border border-white/20">
-                <span className="text-sm">EN</span>
-              </button>
-              <button className="p-2 bg-white/10 backdrop-blur-sm rounded-full hover:bg-white/20 transition-all duration-300 border border-white/20">
-                <Search className="w-4 h-4" />
-              </button>
-            </div>
+            
           </div>
 
           {/* Main Navigation Menu */}
