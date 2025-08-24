@@ -48,31 +48,31 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-3 text-right">
               <li>
-                <Link href="/" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الرئيسية</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/news" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الأخبار</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/trending" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/trending" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الرائج</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/celebrities" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/celebrities" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>المشاهير</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/rankings" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/rankings" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>التصنيفات</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
@@ -88,31 +88,31 @@ const Footer: React.FC = () => {
             </h3>
             <ul className="space-y-3 text-right">
               <li>
-                <Link href="/news?category=politics" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news?category=politics" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>السياسة</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/news?category=sports" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news?category=sports" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الرياضة</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/news?category=technology" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news?category=technology" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>التكنولوجيا</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/news?category=culture" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news?category=culture" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الثقافة</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
               </li>
               <li>
-                <Link href="/news?category=economy" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-end space-x-2 space-x-reverse group">
+                <Link href="/news?category=economy" className="text-white/80 hover:text-mauritania-gold-light transition-colors duration-300 flex items-center justify-start space-x-2 space-x-reverse group">
                   <span>الاقتصاد</span>
                   <div className="w-0 h-0.5 bg-mauritania-gold transition-all duration-300 group-hover:w-4"></div>
                 </Link>
@@ -127,15 +127,15 @@ const Footer: React.FC = () => {
               <div className="absolute bottom-0 right-0 w-12 h-1 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full"></div>
             </h3>
             <ul className="space-y-4 text-white/80 text-right">
-              <li className="flex items-center justify-end space-x-3 space-x-reverse">
+              <li className="flex items-center justify-start space-x-3 space-x-reverse">
                 <Mail className="h-5 w-5 text-mauritania-gold-light" />
                 <span>info@rimna.mr</span>
               </li>
-              <li className="flex items-center justify-end space-x-3 space-x-reverse">
+              <li className="flex items-center justify-start space-x-3 space-x-reverse">
                 <Phone className="h-5 w-5 text-mauritania-gold-light" />
                 <span>+222 XX XX XX XX</span>
               </li>
-              <li className="flex items-center justify-end space-x-3 space-x-reverse">
+              <li className="flex items-center justify-start space-x-3 space-x-reverse">
                 <MapPin className="h-5 w-5 text-mauritania-gold-light" />
                 <span>نواكشوط، موريتانيا</span>
               </li>
@@ -146,8 +146,9 @@ const Footer: React.FC = () => {
         {/* Bottom */}
         <div className="border-t border-white/20 mt-12 pt-8 flex flex-col md:flex-row-reverse justify-between items-center">
           <p className="text-white/70 text-sm flex items-center space-x-2 space-x-reverse">
-            <span>© 2024 ريمنا. جميع الحقوق محفوظة</span>
-            <Heart className="h-4 w-4 text-mauritania-red animate-pulse" />
+          <Heart className="h-4 w-4 text-mauritania-red animate-pulse" />
+            <span>© 2025 ريمنا. جميع الحقوق محفوظة</span>
+           
           </p>
           <div className="flex space-x-6 space-x-reverse mt-4 md:mt-0">
             <Link href="/privacy" className="text-white/70 hover:text-mauritania-gold-light transition-colors duration-300 text-sm">
