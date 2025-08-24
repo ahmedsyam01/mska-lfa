@@ -95,43 +95,30 @@ const CreateArticle: React.FC = () => {
         imageFile: !!formData.imageFile
       });
 
-      // Create FormData for file upload
-      const formDataToSend = new FormData();
-      formDataToSend.append('title', formData.title);
-      formDataToSend.append('content', formData.content);
-      formDataToSend.append('excerpt', formData.excerpt);
-      formDataToSend.append('category', formData.category);
-      formDataToSend.append('tags', JSON.stringify(formData.tags));
-      formDataToSend.append('sourceUrl', formData.sourceUrl);
-      formDataToSend.append('status', 'PENDING');
-      formDataToSend.append('priority', 'MEDIUM');
-      formDataToSend.append('isBreaking', 'false');
-
-      // Add image file if selected
-      if (formData.imageFile) {
-        formDataToSend.append('image', formData.imageFile);
+      // Check if required fields are filled
+      if (!formData.title || !formData.content || !formData.excerpt || !formData.category) {
+        setError('يرجى تعبئة جميع الحقول المطلوبة');
+        return;
       }
 
-      // Debug: Log what's being sent to the backend
-      console.log('📤 FormData contents:');
-      console.log('  title:', formDataToSend.get('title'));
-      console.log('  content:', formDataToSend.get('content'));
-      console.log('  excerpt:', formDataToSend.get('excerpt'));
-      console.log('  category:', formDataToSend.get('category'));
-      console.log('  tags:', formDataToSend.get('tags'));
-      console.log('  sourceUrl:', formDataToSend.get('sourceUrl'));
-      console.log('  status:', formDataToSend.get('status'));
-      console.log('  priority:', formDataToSend.get('priority'));
-      console.log('  isBreaking:', formDataToSend.get('isBreaking'));
-      console.log('  image:', formDataToSend.get('image'));
+      // For now, we'll send JSON data like the admin form
+      // TODO: Implement proper image upload handling
+      const articleData = {
+        title: formData.title,
+        content: formData.content,
+        excerpt: formData.excerpt,
+        category: formData.category,
+        tags: formData.tags,
+        sourceUrl: formData.sourceUrl,
+        status: 'PENDING',
+        isBreaking: false,
+        isFeatured: false
+      };
 
+      console.log('📤 Article data being sent:', articleData);
       console.log('🚀 Sending request to:', '/articles');
       
-      const response = await api.post('/articles', formDataToSend, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await api.post('/articles', articleData);
       
       console.log('✅ Response received:', response);
       setSuccess(true);
@@ -315,7 +302,7 @@ const CreateArticle: React.FC = () => {
             {/* Image Upload */}
             <div>
               <label htmlFor="imageFile" className="block text-sm font-semibold text-gray-700 text-right mb-2">
-                صورة المقال *
+                صورة المقال (اختياري)
               </label>
               <input
                 type="file"
@@ -330,6 +317,9 @@ const CreateArticle: React.FC = () => {
                   تم اختيار الصورة: {formData.imageFile.name}
                 </p>
               )}
+              <p className="mt-2 text-sm text-gray-500 text-right">
+                ملاحظة: سيتم إضافة الصورة لاحقاً من قبل الإدارة
+              </p>
             </div>
 
             {/* Source URL */}
