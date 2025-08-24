@@ -127,81 +127,41 @@ const Dashboard: React.FC = () => {
         const allArticles = articlesResponse.data.articles || [];
         
         // For reporters, we need to detect articles that belong to the user
-        // Since all articles show "مجهول المصدر", we need to use alternative detection methods
         // The key insight: user-created articles have no sourceName, imported articles have sourceName
         const userArticles = allArticles.filter((article: any) => {
-          // Method 1: Check if article has authorId that matches user
+          // Method 1: Check if article has authorId that matches user (most reliable)
           if (article.authorId === user.id) {
-            console.log('🔍 Found article with matching authorId:', article);
             return true;
           }
           
-          // Method 2: Check if it's a PENDING article (likely user-created)
-          if (article.status === 'PENDING') {
-            console.log('🔍 Found PENDING article (likely user-created):', article);
+          // Method 2: Check if it's a PENDING article with no sourceName (likely user-created)
+          if (article.status === 'PENDING' && !article.sourceName) {
             return true;
           }
           
-          // Method 3: Check if article has no sourceName (user-created) vs has sourceName (imported)
+          // Method 3: Check if article has no sourceName and was created recently (within last 7 days)
           if (!article.sourceName) {
-            console.log('🔍 Found article with no sourceName (likely user-created):', article);
-            return true;
-          }
-          
-          // Method 4: Check if article was created recently and has no sourceName
-          const articleDate = new Date(article.createdAt);
-          const now = new Date();
-          const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
-          
-          // If article was created in the last 30 days and has no sourceName, consider it user-created
-          if (daysDiff <= 30 && !article.sourceName) {
-            console.log('🔍 Potential user article (recent, no sourceName):', article);
-            return true;
+            const articleDate = new Date(article.createdAt);
+            const now = new Date();
+            const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
+            
+            // If article was created in the last 7 days and has no sourceName, consider it user-created
+            if (daysDiff <= 7) {
+              return true;
+            }
           }
           
           return false;
         });
         
-        console.log('🔍 Dashboard Debug:', {
-          totalArticlesFound: allArticles.length,
-          userArticlesFound: userArticles.length,
-          userId: user.id,
-          userArticles: userArticles.map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            authorId: a.authorId,
-            sourceName: a.sourceName,
-            status: a.status,
-            createdAt: a.createdAt
-          })),
-          allArticlesSample: allArticles.slice(0, 5).map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            authorId: a.authorId,
-            sourceName: a.sourceName,
-            status: a.status,
-            createdAt: a.createdAt
-          })),
-          // Check if any articles might belong to this user
-          potentialUserArticles: allArticles.filter((a: any) => 
-            a.authorId === user.id || 
-            (!a.authorId && !a.sourceName && a.status === 'PENDING')
-          ).map((a: any) => ({
-            id: a.id,
-            title: a.title,
-            authorId: a.authorId,
-            sourceName: a.sourceName,
-            status: a.status,
-            createdAt: a.createdAt
-          })),
-          // Summary of detection methods
-          detectionSummary: {
-            withAuthorId: allArticles.filter((a: any) => a.authorId === user.id).length,
-            pendingArticles: allArticles.filter((a: any) => a.status === 'PENDING').length,
-            withoutSourceName: allArticles.filter((a: any) => !a.sourceName).length,
-            withSourceName: allArticles.filter((a: any) => a.sourceName).length
-          }
-        });
+        // Simple debug info for development
+        if (process.env.NODE_ENV === 'development') {
+          console.log('🔍 Dashboard Debug:', {
+            totalArticlesFound: allArticles.length,
+            userArticlesFound: userArticles.length,
+            userId: user.id
+          });
+        }
         
         const totalArticles = userArticles.length;
         const pendingArticles = userArticles.filter((article: any) => article.status === 'PENDING').length;
@@ -640,7 +600,7 @@ const Dashboard: React.FC = () => {
                         className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-2xl hover:shadow-lg transform hover:scale-105 transition-all duration-300 font-semibold"
                       >
                         <Plus className="w-5 h-5 ml-2" />
-                        أنشئ أول بلاغ
+                      أنشئ أول بلاغ
                     </Link>
                   </div>
                 ) : (
