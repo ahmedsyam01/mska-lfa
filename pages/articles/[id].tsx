@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout/Layout';
-import { Calendar, Eye, MessageCircle, Share2, ArrowLeft, Heart, Bookmark } from 'lucide-react';
+import { Calendar, Eye, MessageCircle, Share2, ArrowLeft, Heart, Bookmark, User, Source, Tag, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import CommentSystem from '../../components/common/CommentSystem';
@@ -148,15 +148,15 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   if (loading) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+        <div className="max-w-4xl mx-auto px-6 py-12" dir="rtl">
           <div className="animate-pulse">
-            <div className="h-8 bg-gray-200 rounded w-1/4 mb-4"></div>
-            <div className="h-64 bg-gray-200 rounded mb-6"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4 mb-4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2 mb-6"></div>
+            <div className="h-8 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded w-1/4 mb-6"></div>
+            <div className="h-64 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded-2xl mb-8"></div>
+            <div className="h-6 bg-gradient-to-r from-mauritania-gold/20 to-mauritania-red/20 rounded w-3/4 mb-6"></div>
+            <div className="h-4 bg-gradient-to-r from-mauritania-red/20 to-mauritania-green/20 rounded w-1/2 mb-8"></div>
             <div className="space-y-4">
               {[...Array(5)].map((_, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded w-full"></div>
+                <div key={i} className="h-4 bg-gradient-to-r from-mauritania-green/20 to-mauritania-gold/20 rounded w-full"></div>
               ))}
             </div>
           </div>
@@ -168,17 +168,20 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   if (!currentArticle) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+        <div className="max-w-4xl mx-auto px-6 py-12" dir="rtl">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <div className="w-24 h-24 bg-gradient-to-r from-mauritania-red to-mauritania-red-dark rounded-full flex items-center justify-center mx-auto mb-6">
+              <User className="w-12 h-12 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-gradient mb-6">
               المقال غير موجود
             </h1>
-            <p className="text-gray-600 mb-8">
+            <p className="text-mauritania-gold-dark text-lg mb-8">
               المقال الذي تبحث عنه غير موجود.
             </p>
             <button
               onClick={() => router.push('/news')}
-              className="bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition-colors"
+              className="bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white px-8 py-4 rounded-2xl font-bold hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               العودة إلى الأخبار
             </button>
@@ -190,23 +193,30 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8" dir="rtl">
+      <div className="max-w-4xl mx-auto px-6 py-12" dir="rtl">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors space-x-reverse"
+          className="flex items-center gap-3 text-mauritania-gold-dark hover:text-mauritania-gold mb-8 transition-all duration-300 space-x-reverse group"
         >
-          <ArrowLeft className="h-4 w-4 rotate-180" />
-          رجوع
+          <div className="w-10 h-10 bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 rounded-full flex items-center justify-center group-hover:from-mauritania-green/20 group-hover:to-mauritania-gold/20 transition-all duration-300">
+            <ArrowLeft className="h-5 w-5 rotate-180" />
+          </div>
+          <span className="font-semibold">رجوع</span>
         </button>
 
         {/* Article Header */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4 justify-start space-x-reverse">
-            <span className="text-sm text-gray-500">
-              {formatDate(currentArticle.publishedAt)}
-            </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800">
+        <div className="mb-12">
+          <div className="flex items-center gap-4 mb-6 justify-start space-x-reverse">
+            <div className="flex items-center gap-2 text-mauritania-gold-dark">
+              <div className="w-6 h-6 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center">
+                <Clock className="w-3 h-3 text-white" />
+              </div>
+              <span className="text-sm font-semibold">
+                {formatDate(currentArticle.publishedAt)}
+              </span>
+            </div>
+            <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-bold bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 text-mauritania-green-dark border border-mauritania-green/20">
               {currentArticle.category === 'POLITICS' ? 'السياسة' :
                currentArticle.category === 'ECONOMY' ? 'الاقتصاد' :
                currentArticle.category === 'SPORTS' ? 'الرياضة' :
@@ -216,70 +226,82 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
             </span>
           </div>
 
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight text-right">
+          <h1 className="text-4xl md:text-5xl font-bold text-gradient mb-6 leading-tight text-right">
             {currentArticle.titleAr || currentArticle.title}
           </h1>
 
-          <p className="text-xl text-gray-600 mb-6 text-right">
+          <p className="text-xl text-mauritania-gold-dark mb-8 text-right leading-relaxed">
             {currentArticle.descriptionAr || currentArticle.description}
           </p>
 
           {/* Article Meta */}
-          <div className="flex items-center justify-between border-t border-b border-gray-200 py-4 flex-row-reverse">
-            <div className="flex items-center gap-4 space-x-reverse">
-              <div className="flex items-center gap-2 space-x-reverse">
-                <div>
-                  <p className="font-medium text-gray-900 text-right">
-                    {currentArticle.author.nameAr || currentArticle.author.name}
-                  </p>
-                  <p className="text-sm text-gray-500 text-right">
-                    {currentArticle.source.nameAr || currentArticle.source.name}
-                  </p>
+          <div className="modern-card p-8 mb-8">
+            <div className="flex items-center justify-between flex-row-reverse">
+              <div className="flex items-center gap-4 space-x-reverse">
+                <div className="flex items-center gap-4 space-x-reverse">
+                  <div className="text-right">
+                    <p className="font-bold text-mauritania-green-dark text-lg">
+                      {currentArticle.author.nameAr || currentArticle.author.name}
+                    </p>
+                    <p className="text-mauritania-gold-dark font-semibold">
+                      {currentArticle.source.nameAr || currentArticle.source.name}
+                    </p>
+                  </div>
+                  {currentArticle.author.avatar ? (
+                    <img
+                      src={currentArticle.author.avatar}
+                      alt={currentArticle.author.name}
+                      className="w-12 h-12 rounded-full border-2 border-mauritania-green/20"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark rounded-full flex items-center justify-center text-white font-bold">
+                      {(currentArticle.author.nameAr || currentArticle.author.name).charAt(0)}
+                    </div>
+                  )}
                 </div>
-                {currentArticle.author.avatar ? (
-                  <img
-                    src={currentArticle.author.avatar}
-                    alt={currentArticle.author.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <div className="w-8 h-8 bg-gray-200 rounded-full"></div>
-                )}
               </div>
-            </div>
 
-            <div className="flex items-center gap-4 space-x-reverse">
-              <div className="flex items-center gap-1 text-gray-500 space-x-reverse">
-                <span className="text-sm">{currentArticle.viewCount}</span>
-                <Eye className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-1 text-gray-500 space-x-reverse">
-                <span className="text-sm">{currentArticle._count.comments}</span>
-                <MessageCircle className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleShare}
-                  className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                >
-                  <Share2 className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={handleBookmark}
-                  className={`p-2 rounded-full transition-colors ${
-                    bookmarked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} />
-                </button>
-                <button
-                  onClick={handleLike}
-                  className={`p-2 rounded-full transition-colors ${
-                    liked ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} />
-                </button>
+              <div className="flex items-center gap-6 space-x-reverse">
+                <div className="flex items-center gap-2 text-mauritania-gold-dark">
+                  <div className="w-8 h-8 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark rounded-full flex items-center justify-center">
+                    <Eye className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="font-semibold">{currentArticle.viewCount}</span>
+                </div>
+                <div className="flex items-center gap-2 text-mauritania-gold-dark">
+                  <div className="w-8 h-8 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center">
+                    <MessageCircle className="h-4 w-4 text-white" />
+                  </div>
+                  <span className="font-semibold">{currentArticle._count.comments}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleShare}
+                    className="p-3 rounded-xl bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 text-mauritania-green-dark hover:from-mauritania-green/20 hover:to-mauritania-gold/20 transition-all duration-300 border border-mauritania-green/20"
+                  >
+                    <Share2 className="h-5 w-5" />
+                  </button>
+                  <button
+                    onClick={handleBookmark}
+                    className={`p-3 rounded-xl transition-all duration-300 ${
+                      bookmarked 
+                        ? 'bg-gradient-to-r from-mauritania-gold to-mauritania-red text-white shadow-lg' 
+                        : 'bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 text-mauritania-green-dark hover:from-mauritania-green/20 hover:to-mauritania-gold/20 border border-mauritania-green/20'
+                    }`}
+                  >
+                    <Bookmark className={`h-5 w-5 ${bookmarked ? 'fill-current' : ''}`} />
+                  </button>
+                  <button
+                    onClick={handleLike}
+                    className={`p-3 rounded-xl transition-all duration-300 ${
+                      liked 
+                        ? 'bg-gradient-to-r from-mauritania-red to-mauritania-red-dark text-white shadow-lg' 
+                        : 'bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 text-mauritania-green-dark hover:from-mauritania-green/20 hover:to-mauritania-gold/20 border border-mauritania-green/20'
+                    }`}
+                  >
+                    <Heart className={`h-5 w-5 ${liked ? 'fill-current' : ''}`} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -287,19 +309,21 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
         {/* Article Image */}
         {currentArticle.imageUrl && (
-          <div className="mb-8">
-            <img
-              src={fixImageUrl(currentArticle.imageUrl) || ''}
-              alt={currentArticle.titleAr || currentArticle.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg"
-            />
+          <div className="mb-12">
+            <div className="modern-card p-4">
+              <img
+                src={fixImageUrl(currentArticle.imageUrl) || ''}
+                alt={currentArticle.titleAr || currentArticle.title}
+                className="w-full h-64 md:h-96 object-cover rounded-2xl"
+              />
+            </div>
           </div>
         )}
 
         {/* Article Content */}
-        <div className="prose prose-lg max-w-none mb-8">
+        <div className="modern-card p-8 mb-12">
           <div
-            className="text-gray-900 leading-relaxed text-right"
+            className="text-mauritania-green-dark leading-relaxed text-right text-lg"
             dangerouslySetInnerHTML={{
               __html: currentArticle.contentAr || currentArticle.content
             }}
@@ -308,12 +332,16 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
         {/* Tags */}
         {currentArticle.tags && currentArticle.tags.length > 0 && (
-          <div className="mb-8">
-            <div className="flex flex-wrap gap-2 justify-end">
+          <div className="mb-12">
+            <div className="flex items-center gap-3 mb-6 justify-end">
+              <Tag className="w-6 h-6 text-mauritania-gold" />
+              <h3 className="text-xl font-bold text-mauritania-green-dark">العلامات</h3>
+            </div>
+            <div className="flex flex-wrap gap-3 justify-end">
               {currentArticle.tags.map((tag, index) => (
                 <span
                   key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer transition-colors"
+                  className="inline-flex items-center px-4 py-2 rounded-full text-sm bg-gradient-to-r from-mauritania-green/10 to-mauritania-gold/10 text-mauritania-green-dark hover:from-mauritania-green/20 hover:to-mauritania-gold/20 cursor-pointer transition-all duration-300 border border-mauritania-green/20 font-semibold"
                 >
                   #{tag}
                 </span>
@@ -323,33 +351,40 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
         )}
 
         {/* Comment System */}
-        <CommentSystem articleId={currentArticle.id} />
+        <div className="mb-12">
+          <CommentSystem articleId={currentArticle.id} />
+        </div>
 
         {/* Related Articles */}
         {currentArticle.relatedArticles && currentArticle.relatedArticles.length > 0 && (
-          <div className="border-t border-gray-200 pt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-right">
-              مقالات ذات صلة
-            </h2>
+          <div className="modern-card p-8">
+            <div className="flex items-center gap-3 mb-8 justify-end">
+              <div className="w-8 h-8 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center">
+                <Source className="w-4 h-4 text-white" />
+              </div>
+              <h2 className="text-2xl font-bold text-gradient">
+                مقالات ذات صلة
+              </h2>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {currentArticle.relatedArticles.slice(0, 4).map(relatedArticle => (
                 <div
                   key={relatedArticle.id}
                   onClick={() => router.push(`/articles/${relatedArticle.id}`)}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="modern-card p-6 hover:scale-[1.02] transition-all duration-300 cursor-pointer group"
                   dir="rtl"
                 >
                   {relatedArticle.imageUrl && (
                     <img
                       src={relatedArticle.imageUrl}
                       alt={relatedArticle.title}
-                      className="w-full h-32 object-cover rounded-lg mb-3"
+                      className="w-full h-32 object-cover rounded-xl mb-4 group-hover:scale-105 transition-transform duration-300"
                     />
                   )}
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-right">
+                  <h3 className="font-bold text-mauritania-green-dark mb-3 line-clamp-2 text-right group-hover:text-mauritania-green transition-colors duration-300">
                     {relatedArticle.titleAr || relatedArticle.title}
                   </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 text-right">
+                  <p className="text-sm text-mauritania-gold-dark line-clamp-2 text-right leading-relaxed">
                     {relatedArticle.descriptionAr || relatedArticle.description}
                   </p>
                 </div>
