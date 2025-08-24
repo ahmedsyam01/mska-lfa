@@ -436,62 +436,6 @@ const HomePage: React.FC = () => {
           </div>
         )}
 
-        {/* Hero Section with Logo and Promotions */}
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Row 1: Logo + Main Promotion */}
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
-              {/* Logo Section */}
-              <div className="lg:col-span-1">
-                <div className="modern-card p-8 text-center h-full flex flex-col justify-center">
-                  <div className="mb-6">
-                    <div className="text-3xl font-bold text-gradient mb-3">موريتانيا الآن</div>
-                    <div className="text-sm text-mauritania-gold-dark font-medium">WWW.RIMNOW.COM</div>
-                  </div>
-                  <div className="mx-auto w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center shadow-lg animate-float">
-                    <div className="text-white text-2xl font-bold">ر</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Main Promotion */}
-              <div className="lg:col-span-3">
-                <div className="modern-card p-8 h-full bg-gradient-to-r from-mauritania-green via-mauritania-gold to-mauritania-red text-white relative overflow-hidden">
-                  <div className="absolute inset-0 bg-black/10"></div>
-                  <div className="relative z-10 text-center">
-                    <div className="text-4xl font-bold mb-4">Bankily Promotion</div>
-                    <div className="text-lg opacity-90">Promotional Image Placeholder</div>
-                    <div className="mt-6">
-                      <button className="bg-white/20 backdrop-blur-sm text-white px-6 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
-                        اكتشف المزيد
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Row 2: Two Promotions */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {/* Environmental Study */}
-              <div className="modern-card p-6 h-32 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-xl font-bold text-mauritania-green mb-2">Environmental Study</div>
-                  <div className="text-mauritania-gold-dark">Promotional Image Placeholder</div>
-                </div>
-              </div>
-
-              {/* Chinguitel */}
-              <div className="modern-card p-6 h-32 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white flex items-center justify-center">
-                <div className="text-center">
-                  <div className="text-xl font-bold mb-2">Chinguitel Promotion</div>
-                  <div className="opacity-90">Promotional Image Placeholder</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Main News Sections */}
         <section className="py-12">
           <div className="max-w-7xl mx-auto px-6">
@@ -551,24 +495,6 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Bottom Promotion Banner */}
-        <section className="py-12">
-          <div className="max-w-7xl mx-auto px-6">
-            <div className="modern-card p-8 bg-gradient-to-r from-mauritania-green via-mauritania-gold to-mauritania-red text-white text-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-black/10"></div>
-              <div className="relative z-10">
-                <div className="text-3xl font-bold mb-3">Bottom Promotion Banner</div>
-                <div className="text-lg opacity-90">Promotional Image Placeholder</div>
-                <div className="mt-6">
-                  <button className="bg-white/20 backdrop-blur-sm text-white px-8 py-3 rounded-full font-semibold hover:bg-white/30 transition-all duration-300 border border-white/30">
-                    تواصل معنا
-                  </button>
-                </div>
-              </div>
             </div>
           </div>
         </section>
