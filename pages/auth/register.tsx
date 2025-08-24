@@ -87,7 +87,8 @@ const RegisterPage: React.FC = () => {
     
     try {
       await register(formData);
-      router.push('/auth/verification-sent');
+      // Redirect to dashboard since registration automatically logs the user in
+      router.push('/dashboard');
     } catch (err) {
       console.error('Registration error:', err);
     }
