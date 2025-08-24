@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import Layout from '../../components/Layout/Layout';
-import { Calendar, Eye, MessageCircle, Share2, ArrowLeft, Heart, Bookmark, User, Source, Tag, Clock } from 'lucide-react';
+import { Calendar, Eye, MessageCircle, Share2, ArrowLeft, Heart, Bookmark, User, Link, Tag, Clock } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ar } from 'date-fns/locale';
 import CommentSystem from '../../components/common/CommentSystem';
@@ -360,7 +360,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
           <div className="modern-card p-8">
             <div className="flex items-center gap-3 mb-8 justify-end">
               <div className="w-8 h-8 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center">
-                <Source className="w-4 h-4 text-white" />
+                <Link className="w-4 h-4 text-white" />
               </div>
               <h2 className="text-2xl font-bold text-gradient">
                 مقالات ذات صلة
