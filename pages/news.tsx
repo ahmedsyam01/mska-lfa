@@ -48,15 +48,17 @@ const NewsPage: React.FC = () => {
       const data = response.data;
       console.log('API Response:', data);
       console.log('Articles:', data.articles?.length || 0);
-      console.log('Total:', data.total);
+      console.log('Total from pagination:', data.pagination?.total);
       console.log('Current Page:', currentPage);
       
       setArticles(data.articles || []);
-      setTotalArticles(data.total || 0);
-      const calculatedPages = Math.ceil((data.total || 0) / articlesPerPage);
+      // Fix: Get total from pagination object
+      const totalCount = data.pagination?.total || 0;
+      setTotalArticles(totalCount);
+      const calculatedPages = Math.ceil(totalCount / articlesPerPage);
       setTotalPages(calculatedPages);
       console.log('Calculated Total Pages:', calculatedPages);
-      console.log('Articles fetched:', data.articles?.length || 0, 'Total:', data.total);
+      console.log('Articles fetched:', data.articles?.length || 0, 'Total:', totalCount);
     } catch (error) {
       console.error('Error fetching articles:', error);
     } finally {
