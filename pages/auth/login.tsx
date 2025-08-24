@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Shield, Sparkles } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { LoginRequest } from '../../src/types';
-import Layout from '../../components/Layout/Layout';
 
 const LoginPage: React.FC = () => {
   const router = useRouter();
@@ -65,129 +64,160 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <Layout title="تسجيل الدخول - ريمنا">
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div className="text-center">
-            <div className="mx-auto h-12 w-12">
-              <h1 className="text-3xl font-bold text-primary-600">
-                ريمنا
-              </h1>
-            </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-              تسجيل الدخول إلى حسابك
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600">
-              ليس لديك حساب؟{' '}
-              <Link 
-                href="/auth/register"
-                className="font-medium text-primary-600 hover:text-primary-500"
-              >
-                إنشاء حساب جديد
-              </Link>
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-3xl shadow-2xl mb-6">
+            <Shield className="w-10 h-10 text-white" />
           </div>
-          
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent mb-2">
+            ريمنا
+          </h1>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            مرحباً بك مرة أخرى
+          </h2>
+          <p className="text-gray-600">
+            سجل دخولك للوصول إلى حسابك
+          </p>
+        </div>
+
+        {/* Login Form */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Error Display */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md text-right">
+              <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-right flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 {error}
               </div>
             )}
             
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 text-right">
-                  البريد الإلكتروني
-                </label>
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 text-right">
+                البريد الإلكتروني
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-mauritania-green" />
+                </div>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-right ${
-                    formErrors.email ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                    formErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                   }`}
                   placeholder="أدخل بريدك الإلكتروني"
                   value={formData.email}
                   onChange={handleChange}
                 />
-                {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600 text-right">{formErrors.email}</p>
-                )}
               </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 text-right">
-                  كلمة المرور
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    required
-                    className={`block w-full px-3 py-2 pl-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-right ${
-                      formErrors.password ? 'border-red-300' : 'border-gray-300'
-                    }`}
-                    placeholder="أدخل كلمة المرور"
-                    value={formData.password}
-                    onChange={handleChange}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 left-0 pl-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
-                    ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
-                    )}
-                  </button>
+              {formErrors.email && (
+                <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                  {formErrors.email}
+                </p>
+              )}
+            </div>
+            
+            {/* Password Field */}
+            <div className="space-y-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-gray-700 text-right">
+                كلمة المرور
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-mauritania-green" />
                 </div>
-                {formErrors.password && (
-                  <p className="mt-1 text-sm text-red-600 text-right">{formErrors.password}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center">
-              <div className="text-sm">
-                <Link 
-                  href="/auth/forgot-password"
-                  className="font-medium text-primary-600 hover:text-primary-500"
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                    formErrors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
+                  }`}
+                  placeholder="أدخل كلمة المرور"
+                  value={formData.password}
+                  onChange={handleChange}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-mauritania-green transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
-                  نسيت كلمة المرور؟
-                </Link>
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
+              {formErrors.password && (
+                <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                  {formErrors.password}
+                </p>
+              )}
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            {/* Forgot Password Link */}
+            <div className="text-center">
+              <Link 
+                href="/auth/forgot-password"
+                className="text-sm text-mauritania-green hover:text-mauritania-green-dark font-medium transition-colors hover:underline"
               >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    جاري تسجيل الدخول...
-                  </div>
-                ) : (
-                  'تسجيل الدخول'
-                )}
-              </button>
+                نسيت كلمة المرور؟
+              </Link>
             </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white py-4 px-6 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-lg"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  جاري تسجيل الدخول...
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-3">
+                  <span>تسجيل الدخول</span>
+                  <ArrowRight className="w-5 h-5" />
+                </div>
+              )}
+            </button>
           </form>
         </div>
+
+        {/* Sign Up Link */}
+        <div className="text-center mt-8">
+          <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/20 shadow-lg">
+            <User className="w-4 h-4 text-mauritania-green" />
+            <span className="text-gray-700">
+              ليس لديك حساب؟{' '}
+              <Link 
+                href="/auth/register"
+                className="font-semibold text-mauritania-green hover:text-mauritania-green-dark transition-colors hover:underline"
+              >
+                إنشاء حساب جديد
+              </Link>
+            </span>
+          </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-mauritania-gold/20 to-mauritania-red/20 rounded-full blur-xl"></div>
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-br from-mauritania-green/20 to-mauritania-gold/20 rounded-full blur-xl"></div>
       </div>
-    </Layout>
+    </div>
   );
 };
 

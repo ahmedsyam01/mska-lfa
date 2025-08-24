@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Shield, UserPlus, Phone, MapPin, FileText } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { RegisterRequest } from '../../src/types';
-import Layout from '../../components/Layout/Layout';
 
 const RegisterPage: React.FC = () => {
   const router = useRouter();
@@ -45,35 +44,35 @@ const RegisterPage: React.FC = () => {
     
     // Required fields
     if (!formData.email) {
-      errors.email = 'Email is required';
+      errors.email = 'البريد الإلكتروني مطلوب';
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = 'Invalid email format';
+      errors.email = 'صيغة البريد الإلكتروني غير صحيحة';
     }
     
     if (!formData.username) {
-      errors.username = 'Username is required';
+      errors.username = 'اسم المستخدم مطلوب';
     } else if (formData.username.length < 3) {
-      errors.username = 'Username must be at least 3 characters long';
+      errors.username = 'اسم المستخدم يجب أن يكون 3 أحرف على الأقل';
     }
     
     if (!formData.password) {
-      errors.password = 'Password is required';
+      errors.password = 'كلمة المرور مطلوبة';
     } else if (formData.password.length < 8) {
-      errors.password = 'Password must be at least 8 characters long';
+      errors.password = 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
     }
     
     if (!confirmPassword) {
-      errors.confirmPassword = 'Confirm password is required';
+      errors.confirmPassword = 'تأكيد كلمة المرور مطلوب';
     } else if (formData.password !== confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = 'كلمات المرور غير متطابقة';
     }
     
     if (!formData.firstName) {
-      errors.firstName = 'First name is required';
+      errors.firstName = 'الاسم الأول مطلوب';
     }
     
     if (!formData.lastName) {
-      errors.lastName = 'Last name is required';
+      errors.lastName = 'اسم العائلة مطلوب';
     }
     
     setFormErrors(errors);
@@ -94,250 +93,337 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <Layout>
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8">
-          <div>
-            <div className="mx-auto h-12 w-12 text-center">
-              <h1 className="text-3xl font-bold text-primary-600 dark:text-primary-400">
-                App Name
-              </h1>
-            </div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-              Sign Up
-            </h2>
-            <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?{' '}
-              <Link 
-                href="/auth/login"
-                className="font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400"
-              >
-                Sign In
-              </Link>
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-mauritania-green/5 via-white to-mauritania-gold/5 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-3xl shadow-2xl mb-6">
+            <UserPlus className="w-10 h-10 text-white" />
           </div>
-          
-          <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-mauritania-green to-mauritania-gold bg-clip-text text-transparent mb-2">
+            ريمنا
+          </h1>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            إنشاء حساب جديد
+          </h2>
+          <p className="text-gray-600">
+            انضم إلينا واحصل على تجربة رائعة
+          </p>
+        </div>
+
+        {/* Register Form */}
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Error Display */}
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
+              <div className="bg-gradient-to-r from-red-50 to-red-100 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-right flex items-center gap-2">
+                <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                 {error}
               </div>
             )}
             
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    First Name
-                  </label>
+            {/* Name Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 text-right">
+                  الاسم الأول
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-mauritania-green" />
+                  </div>
                   <input
                     id="firstName"
                     name="firstName"
                     type="text"
                     required
-                    placeholder="First Name"
+                    placeholder="الاسم الأول"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                      formErrors.firstName ? 'border-red-300' : 'border-gray-300'
+                    className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                      formErrors.firstName ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                     }`}
                   />
-                  {formErrors.firstName && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.firstName}</p>
-                  )}
                 </div>
-                
-                <div>
-                  <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Last Name
-                  </label>
+                {formErrors.firstName && (
+                  <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                    {formErrors.firstName}
+                  </p>
+                )}
+              </div>
+              
+              <div className="space-y-2">
+                <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 text-right">
+                  اسم العائلة
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <User className="h-5 w-5 text-mauritania-green" />
+                  </div>
                   <input
                     id="lastName"
                     name="lastName"
                     type="text"
                     required
-                    placeholder="Last Name"
+                    placeholder="اسم العائلة"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                      formErrors.lastName ? 'border-red-300' : 'border-gray-300'
+                    className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                      formErrors.lastName ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                     }`}
                   />
-                  {formErrors.lastName && (
-                    <p className="mt-1 text-sm text-red-600">{formErrors.lastName}</p>
-                  )}
                 </div>
+                {formErrors.lastName && (
+                  <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                    {formErrors.lastName}
+                  </p>
+                )}
               </div>
-              
-              <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Username
-                </label>
+            </div>
+            
+            {/* Username Field */}
+            <div className="space-y-2">
+              <label htmlFor="username" className="block text-sm font-semibold text-gray-700 text-right">
+                اسم المستخدم
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-mauritania-green" />
+                </div>
                 <input
                   id="username"
                   name="username"
                   type="text"
                   required
-                  placeholder="Username"
+                  placeholder="اسم المستخدم"
                   value={formData.username}
                   onChange={handleChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                    formErrors.username ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                    formErrors.username ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                   }`}
                 />
-                {formErrors.username && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.username}</p>
-                )}
               </div>
-              
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Email
-                </label>
+              {formErrors.username && (
+                <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                  {formErrors.username}
+                </p>
+              )}
+            </div>
+            
+            {/* Email Field */}
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-gray-700 text-right">
+                البريد الإلكتروني
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-mauritania-green" />
+                </div>
                 <input
                   id="email"
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  placeholder="Email"
+                  placeholder="البريد الإلكتروني"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                    formErrors.email ? 'border-red-300' : 'border-gray-300'
+                  className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                    formErrors.email ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                   }`}
                 />
-                {formErrors.email && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.email}</p>
-                )}
               </div>
-              
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Password
+              {formErrors.email && (
+                <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                  <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                  {formErrors.email}
+                </p>
+              )}
+            </div>
+            
+            {/* Password Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 text-right">
+                  كلمة المرور
                 </label>
-                <div className="mt-1 relative">
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-mauritania-green" />
+                  </div>
                   <input
                     id="password"
                     name="password"
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
-                    placeholder="Password"
+                    placeholder="كلمة المرور"
                     value={formData.password}
                     onChange={handleChange}
-                    className={`block w-full px-3 py-2 pr-10 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                      formErrors.password ? 'border-red-300' : 'border-gray-300'
+                    className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                      formErrors.password ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
                     }`}
                   />
                   <button
                     type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                    className="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400 hover:text-mauritania-green transition-colors"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? (
-                      <EyeSlashIcon className="h-5 w-5 text-gray-400" />
+                      <EyeOff className="h-5 w-5" />
                     ) : (
-                      <EyeIcon className="h-5 w-5 text-gray-400" />
+                      <Eye className="h-5 w-5" />
                     )}
                   </button>
                 </div>
                 {formErrors.password && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.password}</p>
+                  <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                    {formErrors.password}
+                  </p>
                 )}
               </div>
               
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Confirm Password
+              <div className="space-y-2">
+                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 text-right">
+                  تأكيد كلمة المرور
                 </label>
-                <input
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="new-password"
-                  required
-                  placeholder="Confirm Password"
-                  value={confirmPassword}
-                  onChange={handleChange}
-                  className={`mt-1 block w-full px-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white ${
-                    formErrors.confirmPassword ? 'border-red-300' : 'border-gray-300'
-                  }`}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Lock className="h-5 w-5 text-mauritania-green" />
+                  </div>
+                  <input
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    type={showPassword ? 'text' : 'password'}
+                    autoComplete="new-password"
+                    required
+                    placeholder="تأكيد كلمة المرور"
+                    value={confirmPassword}
+                    onChange={handleChange}
+                    className={`w-full pr-12 pl-4 py-4 border-2 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg ${
+                      formErrors.confirmPassword ? 'border-red-300 bg-red-50' : 'border-gray-200 hover:border-mauritania-green/50'
+                    }`}
+                  />
+                </div>
                 {formErrors.confirmPassword && (
-                  <p className="mt-1 text-sm text-red-600">{formErrors.confirmPassword}</p>
+                  <p className="text-sm text-red-600 text-right flex items-center gap-1">
+                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full"></div>
+                    {formErrors.confirmPassword}
+                  </p>
                 )}
               </div>
-              
-              <div>
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Phone Number (optional)
+            </div>
+            
+            {/* Optional Fields */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="phoneNumber" className="block text-sm font-semibold text-gray-700 text-right">
+                  رقم الهاتف (اختياري)
                 </label>
-                <input
-                  id="phoneNumber"
-                  name="phoneNumber"
-                  type="tel"
-                  placeholder="Phone Number"
-                  value={formData.phoneNumber}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <Phone className="h-5 w-5 text-mauritania-green" />
+                  </div>
+                  <input
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    type="tel"
+                    placeholder="رقم الهاتف"
+                    value={formData.phoneNumber}
+                    onChange={handleChange}
+                    className="w-full pr-12 pl-4 py-4 border-2 border-gray-200 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg hover:border-mauritania-green/50"
+                  />
+                </div>
               </div>
               
-              <div>
-                <label htmlFor="location" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Location (optional)
+              <div className="space-y-2">
+                <label htmlFor="location" className="block text-sm font-semibold text-gray-700 text-right">
+                  الموقع (اختياري)
                 </label>
-                <input
-                  id="location"
-                  name="location"
-                  type="text"
-                  placeholder="Location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                    <MapPin className="h-5 w-5 text-mauritania-green" />
+                  </div>
+                  <input
+                    id="location"
+                    name="location"
+                    type="text"
+                    placeholder="الموقع"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className="w-full pr-12 pl-4 py-4 border-2 border-gray-200 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg hover:border-mauritania-green/50"
+                  />
+                </div>
               </div>
-              
-              <div>
-                <label htmlFor="bio" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Bio (optional)
-                </label>
+            </div>
+            
+            {/* Bio Field */}
+            <div className="space-y-2">
+              <label htmlFor="bio" className="block text-sm font-semibold text-gray-700 text-right">
+                نبذة شخصية (اختياري)
+              </label>
+              <div className="relative">
+                <div className="absolute top-4 right-4 flex items-center pointer-events-none">
+                  <FileText className="h-5 w-5 text-mauritania-green" />
+                </div>
                 <textarea
                   id="bio"
                   name="bio"
                   rows={3}
-                  placeholder="Bio"
+                  placeholder="اكتب نبذة عن نفسك..."
                   value={formData.bio}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                  className="w-full pr-12 pl-4 py-4 border-2 border-gray-200 rounded-2xl shadow-sm placeholder-gray-400 focus:outline-none focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 text-right text-lg hover:border-mauritania-green/50 resize-none"
                 />
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={isLoading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed dark:bg-primary-500 dark:hover:bg-primary-600"
-              >
-                {isLoading ? (
-                  <div className="flex items-center">
-                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Signing Up
-                  </div>
-                ) : (
-                  'Sign Up'
-                )}
-              </button>
-            </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white py-4 px-6 rounded-2xl font-semibold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-lg"
+            >
+              {isLoading ? (
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  جاري إنشاء الحساب...
+                </div>
+              ) : (
+                <div className="flex items-center justify-center gap-3">
+                  <span>إنشاء الحساب</span>
+                  <ArrowRight className="w-5 h-5" />
+                </div>
+              )}
+            </button>
           </form>
         </div>
+
+        {/* Sign In Link */}
+        <div className="text-center mt-8">
+          <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-sm px-6 py-3 rounded-2xl border border-white/20 shadow-lg">
+            <Shield className="w-4 h-4 text-mauritania-green" />
+            <span className="text-gray-700">
+              لديك حساب بالفعل؟{' '}
+              <Link 
+                href="/auth/login"
+                className="font-semibold text-mauritania-green hover:text-mauritania-green-dark transition-colors hover:underline"
+              >
+                تسجيل الدخول
+              </Link>
+            </span>
+          </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-10 left-10 w-20 h-20 bg-gradient-to-br from-mauritania-gold/20 to-mauritania-red/20 rounded-full blur-xl"></div>
+        <div className="absolute bottom-10 right-10 w-32 h-32 bg-gradient-to-br from-mauritania-green/20 to-mauritania-gold/20 rounded-full blur-xl"></div>
       </div>
-    </Layout>
+    </div>
   );
 };
 
