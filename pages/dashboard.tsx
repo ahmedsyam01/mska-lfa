@@ -33,24 +33,18 @@ import Link from 'next/link';
 
 interface DashboardData {
   stats: {
-    totalReports: number;
-    publishedReports: number;
-    pendingReports: number;
+    // For reporters: article stats only
     totalArticles?: number;
     pendingArticles?: number;
+    // For regular users: report stats only  
+    totalReports?: number;
+    publishedReports?: number;
+    pendingReports?: number;
+    // Common stats
     totalViews: number;
     totalComments: number;
   };
-  recentReports?: Array<{
-    id: string;
-    title: string;
-    status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
-    createdAt: string;
-    viewCount: number;
-    _count: {
-      comments: number;
-    };
-  }>;
+  // For reporters: articles only
   recentArticles?: Array<{
     id: string;
     title: string;
@@ -61,14 +55,26 @@ interface DashboardData {
       comments: number;
     };
   }>;
-  featuredNews: Array<{
+  // For regular users: reports only
+  recentReports?: Array<{
     id: string;
     title: string;
-    excerpt: string;
-    category: string;
-    imageUrl?: string;
-    views: number;
+    status: 'PENDING' | 'PUBLISHED' | 'REJECTED';
     createdAt: string;
+    viewCount: number;
+    _count: {
+      comments: number;
+    };
+  }>;
+  // Common: trending topics
+  featuredNews: Array<{
+    id: string;
+    topic?: string;
+    topicAr?: string;
+    description?: string;
+    descriptionAr?: string;
+    count: number;
+    category?: string;
   }>;
 }
 
@@ -169,11 +175,7 @@ const Dashboard: React.FC = () => {
             totalArticles,
             pendingArticles,
             totalViews,
-            totalComments,
-            // Keep these for compatibility but they won't be used for reporters
-            totalReports: 0,
-            publishedReports: 0,
-            pendingReports: 0
+            totalComments
           },
           recentArticles,
           featuredNews: trendingResponse.data || []
@@ -192,10 +194,7 @@ const Dashboard: React.FC = () => {
             publishedReports: reportsStatsResponse.data.publishedReports || 0,
             pendingReports: reportsStatsResponse.data.pendingReports || 0,
             totalViews: reportsStatsResponse.data.totalViews || 0,
-            totalComments: reportsStatsResponse.data.totalComments || 0,
-            // Keep these for compatibility but they won't be used for regular users
-            totalArticles: 0,
-            pendingArticles: 0
+            totalComments: reportsStatsResponse.data.totalComments || 0
           },
           recentReports: reportsResponse.data.reports,
           featuredNews: trendingResponse.data || []
@@ -204,20 +203,30 @@ const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
       // Set default values if API fails
-      setData({
-        stats: {
-          totalArticles: 0,
-          pendingArticles: 0,
-          totalReports: 0,
-                      publishedReports: 0,
-          pendingReports: 0,
-          totalViews: 0,
-          totalComments: 0
-        },
-        recentArticles: [],
-        recentReports: [],
-        featuredNews: []
-      });
+      if (user?.role === 'REPORTER') {
+        setData({
+          stats: {
+            totalArticles: 0,
+            pendingArticles: 0,
+            totalViews: 0,
+            totalComments: 0
+          },
+          recentArticles: [],
+          featuredNews: []
+        });
+      } else {
+        setData({
+          stats: {
+            totalReports: 0,
+            publishedReports: 0,
+            pendingReports: 0,
+            totalViews: 0,
+            totalComments: 0
+          },
+          recentReports: [],
+          featuredNews: []
+        });
+      }
     } finally {
       setLoading(false);
     }
