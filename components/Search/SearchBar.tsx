@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, X, Loader2 } from 'lucide-react';
+import { Search, X, Loader2, Globe, TrendingUp } from 'lucide-react';
 import { articlesAPI } from '../../utils/api';
 
 interface SearchResult {
@@ -101,40 +101,57 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
     return new Date(dateString).toLocaleDateString('ar-MA');
   };
 
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'POLITICS': return 'from-mauritania-red to-mauritania-red-dark';
+      case 'ECONOMY': return 'from-mauritania-gold to-mauritania-gold-dark';
+      case 'SPORTS': return 'from-mauritania-green to-mauritania-green-dark';
+      case 'TECHNOLOGY': return 'from-mauritania-green to-mauritania-gold';
+      case 'CULTURE': return 'from-mauritania-gold to-mauritania-red';
+      case 'HEALTH': return 'from-mauritania-green to-mauritania-green-light';
+      default: return 'from-mauritania-green to-mauritania-gold';
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-start justify-center pt-20">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-4xl mx-4 max-h-[80vh] overflow-hidden">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-start justify-center pt-20">
+      <div className="modern-card w-full max-w-4xl mx-4 max-h-[80vh] overflow-hidden animate-slide-up">
         {/* Search Header */}
-        <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-2xl font-bold text-gray-900">البحث في الموقع</h2>
+        <div className="flex items-center justify-between p-8 border-b border-white/20 bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white rounded-t-2xl">
+          <div className="flex items-center space-x-3 space-x-reverse">
+            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
+              <Search className="w-5 h-5 text-white" />
+            </div>
+            <h2 className="text-2xl font-bold">البحث في الموقع</h2>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-3 hover:bg-white/20 rounded-xl transition-all duration-300 hover:scale-110"
           >
-            <X className="w-6 h-6 text-gray-600" />
+            <X className="w-6 h-6 text-white" />
           </button>
         </div>
 
         {/* Search Input */}
-        <div className="p-6">
+        <div className="p-8">
           <form onSubmit={handleSubmit} className="relative">
             <div className="relative">
-              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute right-4 top-1/2 transform -translate-y-1/2 w-6 h-6 text-mauritania-green" />
               <input
                 ref={searchInputRef}
                 type="text"
                 value={query}
                 onChange={handleInputChange}
                 placeholder="ابحث عن المقالات..."
-                className="w-full pl-4 pr-12 py-4 border border-gray-300 rounded-lg text-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full pl-4 pr-14 py-4 border-2 border-mauritania-green/30 rounded-2xl text-lg focus:ring-4 focus:ring-mauritania-green/20 focus:border-mauritania-green transition-all duration-300 bg-white/50 backdrop-blur-sm"
                 dir="rtl"
               />
             </div>
             <button
               type="submit"
-              className="mt-4 w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-medium"
+              className="mt-6 w-full bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white py-4 px-8 rounded-2xl hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
             >
               بحث
             </button>
@@ -142,11 +159,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
         </div>
 
         {/* Search Results */}
-        <div className="px-6 pb-6 overflow-y-auto max-h-96">
+        <div className="px-8 pb-8 overflow-y-auto max-h-96">
           {loading && (
-            <div className="text-center py-8">
-              <Loader2 className="w-8 h-8 animate-spin text-blue-600 mx-auto mb-2" />
-              <p className="text-gray-600">جاري البحث...</p>
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                <Loader2 className="w-8 h-8 text-white" />
+              </div>
+              <p className="text-mauritania-green-dark text-lg font-medium">جاري البحث...</p>
+              <p className="text-gray-500 text-sm mt-2">يرجى الانتظار</p>
             </div>
           )}
 
@@ -154,35 +174,46 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
             <div>
               {results.length > 0 ? (
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                    نتائج البحث ({results.length})
+                  <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center space-x-2 space-x-reverse">
+                    <TrendingUp className="w-6 h-6 text-mauritania-green" />
+                    <span>نتائج البحث ({results.length})</span>
                   </h3>
                   <div className="space-y-4">
                     {results.map((result) => (
                       <div
                         key={result.id}
-                        className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
+                        className="modern-card p-6 hover:scale-[1.02] transition-all duration-300 cursor-pointer group"
                       >
-                        <div className="flex gap-4">
+                        <div className="flex gap-6">
                           {result.image && (
-                            <img
-                              src={result.image}
-                              alt={result.titleAr || result.title}
-                              className="w-20 h-20 object-cover rounded-lg"
-                            />
+                            <div className="relative">
+                              <img
+                                src={result.image}
+                                alt={result.titleAr || result.title}
+                                className="w-24 h-24 object-cover rounded-xl shadow-lg group-hover:scale-105 transition-transform duration-300"
+                              />
+                              <div className="absolute -top-2 -right-2">
+                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-bold text-white bg-gradient-to-r ${getCategoryColor(result.category)} shadow-lg`}>
+                                  {result.categoryAr || result.category}
+                                </span>
+                              </div>
+                            </div>
                           )}
                           <div className="flex-1">
-                            <h4 className="font-semibold text-gray-900 mb-2 line-clamp-2">
+                            <h4 className="font-bold text-gray-900 mb-3 line-clamp-2 text-lg group-hover:text-mauritania-green transition-colors duration-300">
                               {result.titleAr || result.title}
                             </h4>
-                            <p className="text-gray-600 text-sm mb-2 line-clamp-2">
+                            <p className="text-gray-600 text-sm mb-4 line-clamp-2 leading-relaxed">
                               {result.excerptAr || result.excerpt}
                             </p>
                             <div className="flex items-center gap-4 text-xs text-gray-500">
-                              <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                              <span className={`bg-gradient-to-r ${getCategoryColor(result.category)} text-white px-3 py-1.5 rounded-full font-medium shadow-md`}>
                                 {result.categoryAr || result.category}
                               </span>
-                              <span>{formatDate(result.createdAt)}</span>
+                              <div className="flex items-center gap-1 space-x-reverse text-mauritania-gold-dark">
+                                <Globe className="w-3 h-3" />
+                                <span>{formatDate(result.createdAt)}</span>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -191,9 +222,11 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               ) : (
-                <div className="text-center py-8">
-                  <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600 text-lg">لم يتم العثور على نتائج</p>
+                <div className="text-center py-12">
+                  <div className="w-20 h-20 bg-gradient-to-r from-mauritania-gold to-mauritania-red rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Search className="w-10 h-10 text-white" />
+                  </div>
+                  <p className="text-gray-700 text-xl font-bold mb-2">لم يتم العثور على نتائج</p>
                   <p className="text-gray-500">جرب كلمات بحث مختلفة</p>
                 </div>
               )}
@@ -201,9 +234,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ isOpen, onClose }) => {
           )}
 
           {!hasSearched && !loading && (
-            <div className="text-center py-8">
-              <Search className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">اكتب في مربع البحث للبدء</p>
+            <div className="text-center py-12">
+              <div className="w-20 h-20 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full flex items-center justify-center mx-auto mb-6">
+                <Search className="w-10 h-10 text-white" />
+              </div>
+              <p className="text-gray-700 text-xl font-bold mb-2">البحث في ريمنا</p>
+              <p className="text-gray-500">اكتب في مربع البحث للبدء في العثور على المقالات</p>
             </div>
           )}
         </div>

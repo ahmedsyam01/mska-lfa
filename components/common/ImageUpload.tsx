@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X, Image as ImageIcon, Camera, Sparkles } from 'lucide-react';
 import { uploadAPI } from '../../utils/api';
 
 interface ImageUploadProps {
@@ -103,48 +103,53 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <div className={`space-y-4 ${className}`}>
+    <div className={`space-y-6 ${className}`}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="block text-lg font-bold text-mauritania-green-dark mb-2">
           {label}
         </label>
       )}
 
       {currentImageUrl ? (
         <div className="relative">
-          <div className="relative w-full h-48 bg-gray-100 rounded-lg overflow-hidden">
-            <img
-              src={currentImageUrl && !currentImageUrl.startsWith('http') ? `http://localhost:3001${currentImageUrl}` : currentImageUrl}
-              alt="Current image"
-              className="w-full h-full object-cover"
-            />
+          <div className="modern-card overflow-hidden">
+            <div className="relative w-full h-64 bg-gradient-to-br from-mauritania-green-light/10 to-mauritania-gold-light/10 overflow-hidden">
+              <img
+                src={currentImageUrl && !currentImageUrl.startsWith('http') ? `http://localhost:3001${currentImageUrl}` : currentImageUrl}
+                alt="Current image"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
+              {!disabled && (
+                <button
+                  type="button"
+                  onClick={handleRemoveImage}
+                  className="absolute top-3 right-3 p-2 bg-gradient-to-r from-mauritania-red to-mauritania-red-dark text-white rounded-xl hover:from-mauritania-red-dark hover:to-mauritania-red transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-110"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              )}
+            </div>
             {!disabled && (
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="absolute top-2 right-2 p-1 bg-red-600 text-white rounded-full hover:bg-red-700 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="p-4 bg-white">
+                <button
+                  type="button"
+                  onClick={openFileDialog}
+                  className="w-full bg-gradient-to-r from-mauritania-green to-mauritania-green-dark text-white py-3 px-6 rounded-xl hover:from-mauritania-green-dark hover:to-mauritania-green transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                >
+                  تغيير الصورة
+                </button>
+              </div>
             )}
           </div>
-          {!disabled && (
-            <button
-              type="button"
-              onClick={openFileDialog}
-              className="mt-2 text-sm text-primary-600 hover:text-primary-700 transition-colors"
-            >
-              Change Image
-            </button>
-          )}
         </div>
       ) : (
         <div
           className={`
-            border-2 border-dashed rounded-lg p-6 text-center transition-all
+            modern-card p-8 text-center transition-all duration-300
             ${dragOver 
-              ? 'border-primary-500 bg-primary-50' 
-              : 'border-gray-300 hover:border-gray-400'
+              ? 'border-2 border-dashed border-mauritania-gold bg-gradient-to-r from-mauritania-gold/5 to-mauritania-red/5 scale-105' 
+              : 'hover:scale-[1.02] hover:shadow-2xl'
             }
             ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
           `}
@@ -155,25 +160,38 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         >
           {uploading ? (
             <div className="flex flex-col items-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
-              <p className="mt-2 text-sm text-gray-600">Uploading...</p>
+              <div className="w-16 h-16 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full flex items-center justify-center animate-spin mb-4">
+                <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+                  <div className="w-4 h-4 bg-gradient-to-r from-mauritania-green to-mauritania-gold rounded-full animate-pulse"></div>
+                </div>
+              </div>
+              <p className="text-lg font-semibold text-mauritania-green-dark mb-2">جاري الرفع...</p>
+              <p className="text-sm text-gray-500">يرجى الانتظار</p>
             </div>
           ) : (
             <div className="flex flex-col items-center">
-              <ImageIcon className="h-12 w-12 text-gray-400 mb-4" />
-              <p className="text-sm text-gray-600 mb-2">
-                <span className="font-semibold">Click to upload</span> or drag and drop
+              <div className="w-20 h-20 bg-gradient-to-br from-mauritania-green via-mauritania-gold to-mauritania-red rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <Camera className="h-10 w-10 text-white" />
+              </div>
+              <h3 className="text-xl font-bold text-mauritania-green-dark mb-3">
+                رفع صورة جديدة
+              </h3>
+              <p className="text-gray-600 mb-4 text-center">
+                <span className="font-semibold">انقر للرفع</span> أو اسحب وأفلت الصورة هنا
               </p>
-              <p className="text-xs text-gray-500">
-                PNG, JPG, GIF up to {maxSize}MB
-              </p>
+              <div className="flex items-center gap-2 text-sm text-mauritania-gold-dark">
+                <Sparkles className="w-4 h-4" />
+                <span>PNG, JPG, GIF حتى {maxSize}MB</span>
+              </div>
             </div>
           )}
         </div>
       )}
 
       {error && (
-        <p className="text-sm text-red-600">{error}</p>
+        <div className="bg-gradient-to-r from-mauritania-red/10 to-mauritania-red/20 border border-mauritania-red/30 rounded-xl p-4">
+          <p className="text-sm text-mauritania-red-dark font-medium text-center">{error}</p>
+        </div>
       )}
 
       <input
