@@ -148,15 +148,15 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   if (loading) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-6 py-8" dir="rtl">
-          <div className="animate-pulse space-y-6">
-            <div className="h-8 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-64 bg-gray-200 rounded-lg"></div>
-            <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-            <div className="space-y-3">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-4 bg-gray-200 rounded w-full"></div>
+        <div className="max-w-5xl mx-auto px-4 py-6" dir="rtl">
+          <div className="animate-pulse space-y-8">
+            <div className="h-10 bg-slate-200 rounded-lg w-1/3"></div>
+            <div className="h-80 bg-slate-200 rounded-xl"></div>
+            <div className="h-8 bg-slate-200 rounded w-2/3"></div>
+            <div className="h-6 bg-slate-200 rounded w-1/2"></div>
+            <div className="space-y-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-5 bg-slate-200 rounded w-full"></div>
               ))}
             </div>
           </div>
@@ -168,20 +168,20 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   if (!currentArticle) {
     return (
       <Layout>
-        <div className="max-w-4xl mx-auto px-6 py-12" dir="rtl">
+        <div className="max-w-2xl mx-auto px-4 py-16" dir="rtl">
           <div className="text-center">
-            <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <User className="w-10 h-10 text-gray-400" />
+            <div className="w-16 h-16 bg-slate-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <User className="w-8 h-8 text-slate-400" />
             </div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            <h1 className="text-2xl font-bold text-slate-800 mb-4">
               المقال غير موجود
             </h1>
-            <p className="text-gray-600 mb-8">
+            <p className="text-slate-600 mb-8">
               المقال الذي تبحث عنه غير موجود.
             </p>
             <button
               onClick={() => router.push('/news')}
-              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+              className="bg-slate-800 text-white px-6 py-3 rounded-xl hover:bg-slate-700 transition-colors font-medium"
             >
               العودة إلى الأخبار
             </button>
@@ -193,24 +193,29 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
   return (
     <Layout>
-      <div className="max-w-4xl mx-auto px-6 py-8" dir="rtl">
+      <div className="max-w-5xl mx-auto px-4 py-6" dir="rtl">
         {/* Back Button */}
         <button
           onClick={() => router.back()}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 mb-6 transition-colors space-x-reverse"
+          className="flex items-center gap-3 text-slate-600 hover:text-slate-800 mb-8 transition-colors space-x-reverse group"
         >
-          <ArrowLeft className="h-4 w-4 rotate-180" />
-          <span>رجوع</span>
+          <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center group-hover:bg-slate-200 transition-colors">
+            <ArrowLeft className="h-5 w-5 rotate-180" />
+          </div>
+          <span className="font-medium">رجوع</span>
         </button>
 
         {/* Article Header */}
-        <header className="mb-8">
+        <header className="mb-10">
           {/* Category and Date */}
-          <div className="flex items-center gap-4 mb-4 justify-start space-x-reverse">
-            <span className="text-sm text-gray-500">
-              {formatDate(currentArticle.publishedAt)}
-            </span>
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 border border-blue-200">
+          <div className="flex items-center gap-6 mb-6 justify-start space-x-reverse">
+            <div className="flex items-center gap-2 text-slate-500">
+              <Clock className="w-4 h-4" />
+              <span className="text-sm font-medium">
+                {formatDate(currentArticle.publishedAt)}
+              </span>
+            </div>
+            <span className="inline-flex items-center px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 border border-slate-200">
               {currentArticle.category === 'POLITICS' ? 'السياسة' :
                currentArticle.category === 'ECONOMY' ? 'الاقتصاد' :
                currentArticle.category === 'SPORTS' ? 'الرياضة' :
@@ -221,74 +226,80 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
           </div>
 
           {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 leading-tight text-right">
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-800 mb-6 leading-tight text-right">
             {currentArticle.titleAr || currentArticle.title}
           </h1>
 
           {/* Description */}
-          <p className="text-lg text-gray-600 mb-6 text-right leading-relaxed">
+          <p className="text-xl text-slate-600 mb-8 text-right leading-relaxed max-w-4xl">
             {currentArticle.descriptionAr || currentArticle.description}
           </p>
 
           {/* Author and Source */}
-          <div className="flex items-center justify-between border-t border-gray-100 pt-4 flex-row-reverse">
-            <div className="flex items-center gap-3 space-x-reverse">
-              <div className="text-right">
-                <p className="font-medium text-gray-900">
-                  {currentArticle.author.nameAr || currentArticle.author.name}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {currentArticle.source.nameAr || currentArticle.source.name}
-                </p>
-              </div>
-              {currentArticle.author.avatar ? (
-                <img
-                  src={currentArticle.author.avatar}
-                  alt={currentArticle.author.name}
-                  className="w-10 h-10 rounded-full"
-                />
-              ) : (
-                <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
-                  <span className="text-gray-600 font-medium">
-                    {(currentArticle.author.nameAr || currentArticle.author.name).charAt(0)}
-                  </span>
+          <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+            <div className="flex items-center justify-between flex-row-reverse">
+              <div className="flex items-center gap-4 space-x-reverse">
+                <div className="text-right">
+                  <p className="font-bold text-slate-800 text-lg">
+                    {currentArticle.author.nameAr || currentArticle.author.name}
+                  </p>
+                  <p className="text-slate-600 font-medium">
+                    {currentArticle.source.nameAr || currentArticle.source.name}
+                  </p>
                 </div>
-              )}
-            </div>
+                {currentArticle.author.avatar ? (
+                  <img
+                    src={currentArticle.author.avatar}
+                    alt={currentArticle.author.name}
+                    className="w-14 h-14 rounded-2xl border-2 border-slate-200"
+                  />
+                ) : (
+                  <div className="w-14 h-14 bg-slate-200 rounded-2xl flex items-center justify-center">
+                    <span className="text-slate-600 font-bold text-lg">
+                      {(currentArticle.author.nameAr || currentArticle.author.name).charAt(0)}
+                    </span>
+                  </div>
+                )}
+              </div>
 
-            {/* Stats and Actions */}
-            <div className="flex items-center gap-4 space-x-reverse">
-              <div className="flex items-center gap-1 text-gray-500 space-x-reverse">
-                <span className="text-sm">{currentArticle.viewCount}</span>
-                <Eye className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-1 text-gray-500 space-x-reverse">
-                <span className="text-sm">{currentArticle._count.comments}</span>
-                <MessageCircle className="h-4 w-4" />
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleShare}
-                  className="p-2 rounded-full bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
-                >
-                  <Share2 className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={handleBookmark}
-                  className={`p-2 rounded-full transition-colors ${
-                    bookmarked ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} />
-                </button>
-                <button
-                  onClick={handleLike}
-                  className={`p-2 rounded-full transition-colors ${
-                    liked ? 'bg-red-100 text-red-600' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} />
-                </button>
+              {/* Stats and Actions */}
+              <div className="flex items-center gap-6 space-x-reverse">
+                <div className="flex items-center gap-2 text-slate-600 space-x-reverse">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200">
+                    <Eye className="h-4 w-4" />
+                  </div>
+                  <span className="font-semibold">{currentArticle.viewCount}</span>
+                </div>
+                <div className="flex items-center gap-2 text-slate-600 space-x-reverse">
+                  <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200">
+                    <MessageCircle className="h-4 w-4" />
+                  </div>
+                  <span className="font-semibold">{currentArticle._count.comments}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleShare}
+                    className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+                  >
+                    <Share2 className="h-4 w-4" />
+                  </button>
+                  <button
+                    onClick={handleBookmark}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${
+                      bookmarked ? 'bg-blue-500 text-white border-blue-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Bookmark className={`h-4 w-4 ${bookmarked ? 'fill-current' : ''}`} />
+                  </button>
+                  <button
+                    onClick={handleLike}
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center border transition-colors ${
+                      liked ? 'bg-red-500 text-white border-red-500' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -296,51 +307,57 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
         {/* Article Image */}
         {currentArticle.imageUrl && (
-          <div className="mb-8">
-            <img
-              src={fixImageUrl(currentArticle.imageUrl) || ''}
-              alt={currentArticle.titleAr || currentArticle.title}
-              className="w-full h-64 md:h-96 object-cover rounded-lg shadow-sm"
-            />
+          <div className="mb-10">
+            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-200">
+              <img
+                src={fixImageUrl(currentArticle.imageUrl) || ''}
+                alt={currentArticle.titleAr || currentArticle.title}
+                className="w-full h-80 md:h-96 object-cover rounded-xl"
+              />
+            </div>
           </div>
         )}
 
         {/* Article Content */}
-        <article className="prose prose-lg max-w-none mb-8">
-          <div
-            className="text-gray-900 leading-relaxed text-right text-lg"
-            dangerouslySetInnerHTML={{
-              __html: currentArticle.contentAr || currentArticle.content
-            }}
-          />
+        <article className="mb-10">
+          <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm">
+            <div
+              className="text-slate-800 leading-relaxed text-right text-lg prose prose-lg max-w-none prose-headings:text-slate-800 prose-p:text-slate-700 prose-strong:text-slate-800"
+              dangerouslySetInnerHTML={{
+                __html: currentArticle.contentAr || currentArticle.content
+              }}
+            />
+          </div>
         </article>
 
         {/* Tags */}
         {currentArticle.tags && currentArticle.tags.length > 0 && (
-          <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4 text-right">العلامات</h3>
-            <div className="flex flex-wrap gap-2 justify-end">
-              {currentArticle.tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer transition-colors"
-                >
-                  #{tag}
-                </span>
-              ))}
+          <div className="mb-10">
+            <div className="bg-slate-50 rounded-2xl p-6 border border-slate-200">
+              <h3 className="text-xl font-bold text-slate-800 mb-4 text-right">العلامات</h3>
+              <div className="flex flex-wrap gap-3 justify-end">
+                {currentArticle.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center px-4 py-2 rounded-xl text-sm bg-white text-slate-700 hover:bg-slate-100 cursor-pointer transition-colors border border-slate-200 font-medium"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
         {/* Comment System */}
-        <div className="mb-8">
+        <div className="mb-10">
           <CommentSystem articleId={currentArticle.id} />
         </div>
 
         {/* Related Articles */}
         {currentArticle.relatedArticles && currentArticle.relatedArticles.length > 0 && (
-          <div className="border-t border-gray-100 pt-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 text-right">
+          <div className="bg-slate-50 rounded-2xl p-8 border border-slate-200">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6 text-right">
               مقالات ذات صلة
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -348,20 +365,20 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
                 <div
                   key={relatedArticle.id}
                   onClick={() => router.push(`/articles/${relatedArticle.id}`)}
-                  className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 hover:shadow-md transition-shadow cursor-pointer"
+                  className="bg-white rounded-xl p-5 hover:shadow-lg transition-all duration-300 cursor-pointer border border-slate-200 hover:border-slate-300"
                   dir="rtl"
                 >
                   {relatedArticle.imageUrl && (
                     <img
                       src={relatedArticle.imageUrl}
                       alt={relatedArticle.title}
-                      className="w-full h-32 object-cover rounded-lg mb-3"
+                      className="w-full h-40 object-cover rounded-lg mb-4"
                     />
                   )}
-                  <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 text-right">
+                  <h3 className="font-bold text-slate-800 mb-3 line-clamp-2 text-right text-lg">
                     {relatedArticle.titleAr || relatedArticle.title}
                   </h3>
-                  <p className="text-sm text-gray-600 line-clamp-2 text-right">
+                  <p className="text-slate-600 line-clamp-2 text-right leading-relaxed">
                     {relatedArticle.descriptionAr || relatedArticle.description}
                   </p>
                 </div>
