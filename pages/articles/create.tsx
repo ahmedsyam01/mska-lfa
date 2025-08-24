@@ -21,7 +21,7 @@ interface CreateArticleForm {
   excerpt: string;
   category: string;
   tags: string[];
-  imageUrl: string;
+  imageFile: File | null;
   sourceUrl: string;
 }
 
@@ -34,7 +34,7 @@ const CreateArticle: React.FC = () => {
     excerpt: '',
     category: '',
     tags: [],
-    imageUrl: '',
+    imageFile: null,
     sourceUrl: ''
   });
   const [tagInput, setTagInput] = useState('');
@@ -85,14 +85,29 @@ const CreateArticle: React.FC = () => {
     setError(null);
 
     try {
-      const articleData = {
-        ...formData,
-        status: 'PENDING', // Articles start as pending
-        priority: 'MEDIUM',
-        isBreaking: false
-      };
+      // Create FormData for file upload
+      const formDataToSend = new FormData();
+      formDataToSend.append('title', formData.title);
+      formDataToSend.append('content', formData.content);
+      formDataToSend.append('excerpt', formData.excerpt);
+      formDataToSend.append('category', formData.category);
+      formDataToSend.append('tags', JSON.stringify(formData.tags));
+      formDataToSend.append('sourceUrl', formData.sourceUrl);
+      formDataToSend.append('status', 'PENDING');
+      formDataToSend.append('priority', 'MEDIUM');
+      formDataToSend.append('isBreaking', 'false');
 
-      await api.post('/articles', articleData);
+      // Add image file if selected
+      if (formData.imageFile) {
+        formDataToSend.append('image', formData.imageFile);
+      }
+
+      await api.post('/articles', formDataToSend, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      
       setSuccess(true);
       
       // Redirect to dashboard after 2 seconds
@@ -208,15 +223,17 @@ const CreateArticle: React.FC = () => {
                   className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-gold/20 focus:border-mauritania-gold transition-all duration-300 text-right text-lg"
                 >
                   <option value="">اختر الفئة</option>
-                  <option value="سياسة">سياسة</option>
-                  <option value="اقتصاد">اقتصاد</option>
-                  <option value="رياضة">رياضة</option>
-                  <option value="تكنولوجيا">تكنولوجيا</option>
-                  <option value="صحة">صحة</option>
-                  <option value="تعليم">تعليم</option>
-                  <option value="ثقافة">ثقافة</option>
-                  <option value="محليات">محليات</option>
-                  <option value="عالمية">عالمية</option>
+                  <option value="POLITICS">سياسة</option>
+                  <option value="ECONOMY">اقتصاد</option>
+                  <option value="SPORTS">رياضة</option>
+                  <option value="TECHNOLOGY">تكنولوجيا</option>
+                  <option value="HEALTH">صحة</option>
+                  <option value="EDUCATION">تعليم</option>
+                  <option value="CULTURE">ثقافة</option>
+                  <option value="LOCAL">محليات</option>
+                  <option value="INTERNATIONAL">عالمية</option>
+                  <option value="ENVIRONMENT">بيئة</option>
+                  <option value="BREAKING">أخبار عاجلة</option>
                 </select>
               </div>
 
@@ -266,25 +283,24 @@ const CreateArticle: React.FC = () => {
               </div>
             </div>
 
-            {/* Image URL */}
+            {/* Image Upload */}
             <div>
-              <label htmlFor="imageUrl" className="block text-sm font-semibold text-gray-700 text-right mb-2">
-                رابط الصورة
+              <label htmlFor="imageFile" className="block text-sm font-semibold text-gray-700 text-right mb-2">
+                صورة المقال *
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                  <Image className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="url"
-                  id="imageUrl"
-                  name="imageUrl"
-                  value={formData.imageUrl}
-                  onChange={handleChange}
-                  className="w-full pr-12 pl-4 py-3 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-mauritania-gold/20 focus:border-mauritania-gold transition-all duration-300 text-right text-lg"
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <input
+                type="file"
+                id="imageFile"
+                name="imageFile"
+                accept="image/*"
+                onChange={(e) => setFormData(prev => ({ ...prev, imageFile: e.target.files?.[0] }))}
+                className="block w-full text-sm text-mauritania-green border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-mauritania-gold file:text-white hover:file:bg-mauritania-red"
+              />
+              {formData.imageFile && (
+                <p className="mt-2 text-sm text-gray-500 text-right">
+                  تم اختيار الصورة: {formData.imageFile.name}
+                </p>
+              )}
             </div>
 
             {/* Source URL */}
