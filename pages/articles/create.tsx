@@ -293,7 +293,7 @@ const CreateArticle: React.FC = () => {
                 id="imageFile"
                 name="imageFile"
                 accept="image/*"
-                onChange={(e) => setFormData(prev => ({ ...prev, imageFile: e.target.files?.[0] }))}
+                onChange={(e) => setFormData(prev => ({ ...prev, imageFile: e.target.files?.[0] || null }))}
                 className="block w-full text-sm text-mauritania-green border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-mauritania-gold file:text-white hover:file:bg-mauritania-red"
               />
               {formData.imageFile && (
