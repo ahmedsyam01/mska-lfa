@@ -47,26 +47,6 @@ const NewsPage: React.FC = () => {
         page: currentPage
       });
       const data = response.data;
-      console.log('API Response:', data);
-      console.log('Articles:', data.articles?.length || 0);
-      console.log('Total from pagination:', data.pagination?.total);
-      console.log('Current Page:', currentPage);
-      
-      // Debug: Log the first few articles' publishedAt values
-      if (data.articles && data.articles.length > 0) {
-        console.log('Sample publishedAt values:');
-        data.articles.slice(0, 3).forEach((article: any, index: number) => {
-          console.log(`Article ${index + 1}:`, {
-            id: article.id,
-            title: article.title,
-            publishedAt: article.publishedAt,
-            publishedAtType: typeof article.publishedAt,
-            publishedAtParsed: new Date(article.publishedAt),
-            publishedAtISO: new Date(article.publishedAt).toISOString(),
-            publishedAtLocal: new Date(article.publishedAt).toString()
-          });
-        });
-      }
       
       setArticles(data.articles || []);
       // Fix: Get total from pagination object
@@ -74,8 +54,6 @@ const NewsPage: React.FC = () => {
       setTotalArticles(totalCount);
       const calculatedPages = Math.ceil(totalCount / articlesPerPage);
       setTotalPages(calculatedPages);
-      console.log('Calculated Total Pages:', calculatedPages);
-      console.log('Articles fetched:', data.articles?.length || 0, 'Total:', totalCount);
     } catch (error) {
       console.error('Error fetching articles:', error);
     } finally {
@@ -295,36 +273,6 @@ const NewsPage: React.FC = () => {
               التالي
               <ChevronLeft className="w-5 h-5" />
             </button>
-          </div>
-        )}
-
-        {/* Debug Info - Remove this after testing */}
-        <div className="mt-8 p-6 bg-gradient-to-r from-mauritania-red/10 to-mauritania-red/20 rounded-2xl border border-mauritania-red/30">
-          <p className="text-mauritania-red-dark font-semibold mb-2">Debug Info:</p>
-          <p className="text-mauritania-red-dark text-sm">Total Articles: {totalArticles}</p>
-          <p className="text-mauritania-red-dark text-sm">Total Pages: {totalPages}</p>
-          <p className="text-mauritania-red-dark text-sm">Current Page: {currentPage}</p>
-          <p className="text-mauritania-red-dark text-sm">Articles Per Page: {articlesPerPage}</p>
-          <p className="text-mauritania-red-dark text-sm">Should Show Pagination: {totalPages > 1 ? 'Yes' : 'No'}</p>
-        </div>
-
-        {/* Date Debug Info - Remove this after testing */}
-        {articles.length > 0 && (
-          <div className="mt-4 p-6 bg-gradient-to-r from-mauritania-blue/10 to-mauritania-blue/20 rounded-2xl border border-mauritania-blue/30">
-            <p className="text-mauritania-blue-dark font-semibold mb-2">Date Debug Info (First 3 Articles):</p>
-            {articles.slice(0, 3).map((article, index) => (
-              <div key={article.id} className="mb-3 p-3 bg-white/50 rounded-lg">
-                <p className="text-mauritania-blue-dark text-sm font-medium">Article {index + 1}: {article.title.substring(0, 50)}...</p>
-                <p className="text-mauritania-blue-dark text-xs">Raw publishedAt: {article.publishedAt || 'null'}</p>
-                <p className="text-mauritania-blue-dark text-xs">Raw createdAt: {article.createdAt || 'null'}</p>
-                <p className="text-mauritania-blue-dark text-xs">Type publishedAt: {typeof article.publishedAt}</p>
-                <p className="text-mauritania-blue-dark text-xs">Type createdAt: {typeof article.createdAt}</p>
-                <p className="text-mauritania-blue-dark text-xs">Best Date: {article.publishedAt || article.createdAt || 'No date available'}</p>
-                <p className="text-mauritania-blue-dark text-xs">Parsed Date: {new Date(article.publishedAt || article.createdAt || '').toString()}</p>
-                <p className="text-mauritania-blue-dark text-xs">ISO: {new Date(article.publishedAt || article.createdAt || '').toISOString()}</p>
-                <p className="text-mauritania-blue-dark text-xs">Local: {new Date(article.publishedAt || article.createdAt || '').toLocaleString('ar-MA')}</p>
-              </div>
-            ))}
           </div>
         )}
 

@@ -34,7 +34,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
     try {
       // If no date string provided, try to use createdAt as fallback
       if (!dateString) {
-        console.warn('No publishedAt date provided for article:', article.id);
         return 'تاريخ غير محدد';
       }
       
@@ -52,7 +51,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
       
       // Validate the date
       if (isNaN(date.getTime())) {
-        console.warn('Invalid date string:', dateString, 'for article:', article.id);
         return 'تاريخ غير محدد';
       }
       
@@ -72,7 +70,6 @@ const NewsCard: React.FC<NewsCardProps> = ({ article, variant = 'default' }) => 
       return format(date, 'dd/MM/yyyy', { locale: ar });
       
     } catch (error) {
-      console.error('Error formatting date:', error, 'Date string:', dateString, 'for article:', article.id);
       return 'تاريخ غير محدد';
     }
   };
