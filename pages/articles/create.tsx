@@ -85,6 +85,16 @@ const CreateArticle: React.FC = () => {
     setError(null);
 
     try {
+      // Debug: Log the form data before submission
+      console.log('📝 Form data before submission:', formData);
+      console.log('🔍 Required fields check:', {
+        title: !!formData.title,
+        content: !!formData.content,
+        excerpt: !!formData.excerpt,
+        category: !!formData.category,
+        imageFile: !!formData.imageFile
+      });
+
       // Create FormData for file upload
       const formDataToSend = new FormData();
       formDataToSend.append('title', formData.title);
@@ -102,12 +112,28 @@ const CreateArticle: React.FC = () => {
         formDataToSend.append('image', formData.imageFile);
       }
 
-      await api.post('/articles', formDataToSend, {
+      // Debug: Log what's being sent to the backend
+      console.log('📤 FormData contents:');
+      console.log('  title:', formDataToSend.get('title'));
+      console.log('  content:', formDataToSend.get('content'));
+      console.log('  excerpt:', formDataToSend.get('excerpt'));
+      console.log('  category:', formDataToSend.get('category'));
+      console.log('  tags:', formDataToSend.get('tags'));
+      console.log('  sourceUrl:', formDataToSend.get('sourceUrl'));
+      console.log('  status:', formDataToSend.get('status'));
+      console.log('  priority:', formDataToSend.get('priority'));
+      console.log('  isBreaking:', formDataToSend.get('isBreaking'));
+      console.log('  image:', formDataToSend.get('image'));
+
+      console.log('🚀 Sending request to:', '/articles');
+      
+      const response = await api.post('/articles', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
       
+      console.log('✅ Response received:', response);
       setSuccess(true);
       
       // Redirect to dashboard after 2 seconds
@@ -115,6 +141,9 @@ const CreateArticle: React.FC = () => {
         router.push('/dashboard');
       }, 2000);
     } catch (err: any) {
+      console.error('❌ Error details:', err);
+      console.error('❌ Response data:', err.response?.data);
+      console.error('❌ Response status:', err.response?.status);
       setError(err.response?.data?.error || 'حدث خطأ أثناء إنشاء المقال');
     } finally {
       setIsSubmitting(false);
