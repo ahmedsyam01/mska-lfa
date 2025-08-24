@@ -85,34 +85,67 @@ const Dashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       if (user?.role === 'REPORTER') {
-        // For reporters, fetch articles instead of reports
-        const [statsResponse, articlesResponse, featuredNewsResponse] = await Promise.all([
-          api.get('/users/stats'),
+        // For reporters, fetch articles statistics and recent articles
+        const [articlesStatsResponse, articlesResponse, featuredNewsResponse] = await Promise.all([
+          api.get('/articles/stats?authorId=' + user.id), // Get articles statistics for the reporter
           api.get('/articles?limit=5&authorId=' + user.id),
           api.get('/featured-news?limit=5')
         ]);
 
         setData({
-          stats: statsResponse.data,
+          stats: {
+            totalArticles: articlesStatsResponse.data.totalArticles || 0,
+            pendingArticles: articlesStatsResponse.data.pendingArticles || 0,
+            totalViews: articlesStatsResponse.data.totalViews || 0,
+            totalComments: articlesStatsResponse.data.totalComments || 0,
+            // Keep these for compatibility but they won't be used for reporters
+            totalReports: 0,
+            approvedReports: 0,
+            pendingReports: 0
+          },
           recentArticles: articlesResponse.data.articles,
           featuredNews: featuredNewsResponse.data
         });
       } else {
-        // For regular users, fetch reports
-        const [statsResponse, reportsResponse, featuredNewsResponse] = await Promise.all([
-          api.get('/users/stats'),
+        // For regular users, fetch reports statistics
+        const [reportsStatsResponse, reportsResponse, featuredNewsResponse] = await Promise.all([
+          api.get('/reports/stats?reporterId=' + user.id), // Get reports statistics for the user
           api.get('/reports?limit=5'),
           api.get('/featured-news?limit=5')
         ]);
 
         setData({
-          stats: statsResponse.data,
+          stats: {
+            totalReports: reportsStatsResponse.data.totalReports || 0,
+            approvedReports: reportsStatsResponse.data.approvedReports || 0,
+            pendingReports: reportsStatsResponse.data.pendingReports || 0,
+            totalViews: reportsStatsResponse.data.totalViews || 0,
+            totalComments: reportsStatsResponse.data.totalComments || 0,
+            // Keep these for compatibility but they won't be used for regular users
+            totalArticles: 0,
+            pendingArticles: 0
+          },
           recentReports: reportsResponse.data.reports,
           featuredNews: featuredNewsResponse.data
         });
       }
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      // Set default values if API fails
+      setData({
+        stats: {
+          totalArticles: 0,
+          pendingArticles: 0,
+          totalReports: 0,
+          approvedReports: 0,
+          pendingReports: 0,
+          totalViews: 0,
+          totalComments: 0
+        },
+        recentArticles: [],
+        recentReports: [],
+        featuredNews: []
+      });
     } finally {
       setLoading(false);
     }
@@ -247,7 +280,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="mt-4 flex items-center text-sm text-green-600">
                     <TrendingUp className="w-4 h-4 ml-1" />
-                    <span>+12% هذا الشهر</span>
+                    <span>مقالات منشورة</span>
                   </div>
                 </div>
 
@@ -282,7 +315,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="mt-4 flex items-center text-sm text-green-600">
                     <TrendingUp className="w-4 h-4 ml-1" />
-                    <span>+12% هذا الشهر</span>
+                    <span>بلاغات مرسلة</span>
                   </div>
                 </div>
 
@@ -298,7 +331,7 @@ const Dashboard: React.FC = () => {
                   </div>
                   <div className="mt-4 flex items-center text-sm text-green-600">
                     <CheckCircle className="w-4 h-4 ml-1" />
-                    <span>معدل نجاح عالي</span>
+                    <span>بلاغات معتمدة</span>
                   </div>
                 </div>
               </>
@@ -316,7 +349,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="mt-4 flex items-center text-sm text-blue-600">
                 <Zap className="w-4 h-4 ml-1" />
-                <span>محتوى شائع</span>
+                <span>مشاهدات إجمالية</span>
               </div>
             </div>
 
@@ -332,7 +365,7 @@ const Dashboard: React.FC = () => {
               </div>
               <div className="mt-4 flex items-center text-sm text-purple-600">
                 <Users className="w-4 h-4 ml-1" />
-                <span>تفاعل كبير</span>
+                <span>تعليقات إجمالية</span>
               </div>
             </div>
           </div>
