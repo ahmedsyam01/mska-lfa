@@ -116,71 +116,21 @@ const Dashboard: React.FC = () => {
       }
 
       if (user.role === 'REPORTER') {
-        // For reporters, fetch all articles and calculate statistics on frontend
-        // Since /articles/stats endpoint doesn't exist in backend
-        const [articlesResponse, trendingResponse] = await Promise.all([
-          api.get('/articles'), // Get all articles
-          api.get('/trending?limit=5').catch(() => ({ data: [] })) // Fallback if trending fails
+        // Fetch reporter stats and recent articles from backend
+        const [statsResponse, myArticlesResponse, trendingResponse] = await Promise.all([
+          api.get('/articles/stats'),
+          api.get('/articles/my', { params: { limit: 5 } }),
+          api.get('/trending?limit=5').catch(() => ({ data: [] }))
         ]);
-
-        // Calculate statistics from the articles data
-        const allArticles = articlesResponse.data.articles || [];
-        
-        // For reporters, we need to detect articles that belong to the user
-        // The key insight: user-created articles have no sourceName, imported articles have sourceName
-        const userArticles = allArticles.filter((article: any) => {
-          // Method 1: Check if article has authorId that matches user (most reliable)
-          if (article.authorId === user.id) {
-            return true;
-          }
-          
-          // Method 2: Check if it's a PENDING article with no sourceName (likely user-created)
-          if (article.status === 'PENDING' && !article.sourceName) {
-            return true;
-          }
-          
-          // Method 3: Check if article has no sourceName and was created recently (within last 7 days)
-          if (!article.sourceName) {
-            const articleDate = new Date(article.createdAt);
-            const now = new Date();
-            const daysDiff = (now.getTime() - articleDate.getTime()) / (1000 * 3600 * 24);
-            
-            // If article was created in the last 7 days and has no sourceName, consider it user-created
-            if (daysDiff <= 7) {
-              return true;
-            }
-          }
-          
-          return false;
-        });
-        
-        // Simple debug info for development
-        if (process.env.NODE_ENV === 'development') {
-          console.log('🔍 Dashboard Debug:', {
-            totalArticlesFound: allArticles.length,
-            userArticlesFound: userArticles.length,
-            userId: user.id
-          });
-        }
-        
-        const totalArticles = userArticles.length;
-        const pendingArticles = userArticles.filter((article: any) => article.status === 'PENDING').length;
-        const totalViews = userArticles.reduce((sum: number, article: any) => sum + (article.viewCount || 0), 0);
-        const totalComments = userArticles.reduce((sum: number, article: any) => sum + (article._count?.comments || 0), 0);
-
-        // Get recent articles (limit to 5)
-        const recentArticles = userArticles
-          .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-          .slice(0, 5);
 
         setData({
           stats: {
-            totalArticles,
-            pendingArticles,
-            totalViews,
-            totalComments
+            totalArticles: statsResponse.data.totalArticles || 0,
+            pendingArticles: statsResponse.data.pendingArticles || 0,
+            totalViews: statsResponse.data.totalViews || 0,
+            totalComments: statsResponse.data.totalComments || 0
           },
-          recentArticles,
+          recentArticles: myArticlesResponse.data.articles || [],
           featuredNews: trendingResponse.data || []
         });
       } else {
